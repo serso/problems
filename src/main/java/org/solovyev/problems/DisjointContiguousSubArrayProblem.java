@@ -37,7 +37,7 @@ import static java.lang.Math.min;
 // see http://www.codechef.com/JUNE13/problems/DELISH
 // or
 // http://www.careercup.com/question?id=19286747
-final class DisjointContiguousSubArrayTask {
+final class DisjointContiguousSubArrayProblem {
 
 	static int solve(final int[] a) {
 		final int n = a.length;

@@ -26,18 +26,18 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.solovyev.problems.DisjointContiguousSubArrayTask.MaxsMins;
-import static org.solovyev.problems.DisjointContiguousSubArrayTask.Sums;
-import static org.solovyev.problems.DisjointContiguousSubArrayTask.calculateMaxsMins;
-import static org.solovyev.problems.DisjointContiguousSubArrayTask.calculateSums;
-import static org.solovyev.problems.DisjointContiguousSubArrayTask.solve;
+import static org.solovyev.problems.DisjointContiguousSubArrayProblem.MaxsMins;
+import static org.solovyev.problems.DisjointContiguousSubArrayProblem.Sums;
+import static org.solovyev.problems.DisjointContiguousSubArrayProblem.calculateMaxsMins;
+import static org.solovyev.problems.DisjointContiguousSubArrayProblem.calculateSums;
+import static org.solovyev.problems.DisjointContiguousSubArrayProblem.solve;
 
 /**
  * User: serso
  * Date: 8/5/13
  * Time: 12:23 AM
  */
-public class DisjointContiguousSubArrayTaskTest {
+public class DisjointContiguousSubArrayProblemTest {
 
 	@Test
 	public void testSolve() throws Exception {
