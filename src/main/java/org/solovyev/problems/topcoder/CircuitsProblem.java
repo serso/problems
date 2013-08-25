@@ -3,8 +3,6 @@ package org.solovyev.problems.topcoder;
 import org.solovyev.common.text.Strings;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * User: serso
@@ -63,32 +61,5 @@ public class CircuitsProblem {
 		}
 
 		return length;
-	}
-
-	private static final class Graph {
-
-		@Nonnull
-		private final List<Node> endingNodes = new ArrayList<Node>();
-	}
-
-	private static final class Edge {
-
-		@Nonnull
-		private final Node source;
-
-		private final int weight;
-
-		private Edge(@Nonnull Node source, int weight) {
-			this.source = source;
-			this.weight = weight;
-		}
-	}
-
-	private static final class Node {
-
-		@Nonnull
-		private final List<Edge> incomingEdges = new ArrayList<Edge>();
-
-		private int pathLength;
 	}
 }

@@ -1,8 +1,15 @@
 package org.solovyev.problems;
 
+import org.solovyev.graphs.ArtificialVertices;
+import org.solovyev.graphs.Graph;
+import org.solovyev.graphs.Vertex;
+
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
+
+import static org.solovyev.graphs.ArtificialVertices.newArtificialVertices;
+import static org.solovyev.graphs.Vertex.newVertex;
+import static org.solovyev.problems.NestedBoxes.Box.newEmptyBox;
 
 /**
  * User: serso
@@ -24,53 +31,29 @@ public class NestedBoxes {
 		// sort boxes according to their dimensions
 		sortBoxes(boxes);
 
-		final Graph g = createGraph(boxes);
+		final Graph<Box> g = createGraph(boxes);
 
-		addArtificialVertices(g);
-		final Vertex source = g.vertices.get(0);
-		source.weight = 0;
+		final ArtificialVertices<Box> av = addArtificialVertices(g);
 
-		calculateLongestPaths(g);
+		g.calculateSingleSourceLongestPaths(av.getSource());
 
-		return getLongestPath(g);
-	}
-
-	private static List<Box> getLongestPath(Graph g) {
-		final List<Box> result = new ArrayList<Box>();
-
-		final Vertex destination = g.vertices.get(g.vertices.size() - 1);
-		Vertex vertex = destination;
-		while (vertex.predecessor != null) {
-			if (vertex != destination) {
-				result.add(vertex.box);
-			}
-			vertex = vertex.predecessor;
+		final List<Box> path = new ArrayList<Box>();
+		for (Vertex<Box> vertex : g.getPathFrom(av.getDestination())) {
+			path.add(vertex.getValue());
 		}
-
-		Collections.reverse(result);
-		return result;
+		return path;
 	}
 
-	private static void calculateLongestPaths(Graph g) {
-		for (Vertex vertex : g.vertices) {
-			for (Edge edge : vertex.edges) {
-				if(edge.to.weight < vertex.weight + edge.weight) {
-					edge.to.weight = vertex.weight + edge.weight;
-					edge.to.predecessor = vertex;
-				}
-			}
-		}
-	}
+	@Nonnull
+	private static ArtificialVertices<Box> addArtificialVertices(@Nonnull Graph<Box> g) {
+		final Vertex<Box> source = newVertex(newEmptyBox());
+		final Vertex<Box> destination = newVertex(newEmptyBox());
 
-	private static void addArtificialVertices(@Nonnull Graph g) {
-		final Vertex source = Vertex.newVertex(Box.newEmptyBox());
-		final Vertex destination = Vertex.newVertex(Box.newEmptyBox());
-
-		for (Vertex vertex : g.vertices) {
-			if (vertex.box.isTopBox()) {
+		for (Vertex<Box> vertex : g.getVertices()) {
+			if (vertex.getValue().isTopBox()) {
 				source.addNeighbour(vertex, 1);
 			} else {
-				if(vertex.edges.isEmpty()) {
+				if(vertex.getEdges().isEmpty()) {
 					vertex.addNeighbour(destination, 1);
 				}
 			}
@@ -78,22 +61,20 @@ public class NestedBoxes {
 
 		g.addVertexToTheStart(source);
 		g.addVertex(destination);
-	}
 
-	private static void initSingleSourceGraph(@Nonnull Graph g) {
-
+		return newArtificialVertices(source, destination);
 	}
 
 	@Nonnull
-	static Graph createGraph(@Nonnull List<Box> boxes) {
-		final Graph g = new Graph();
+	static Graph<Box> createGraph(@Nonnull List<Box> boxes) {
+		final Graph<Box> g = Graph.newGraph();
 
 		for (Box box : boxes) {
-			final Vertex newVertex = Vertex.newVertex(box);
+			final Vertex<Box> newVertex = newVertex(box);
 
 			boolean inside = false;
-			for (Vertex vertex : g.vertices) {
-				if (newVertex.box.canBeInsideOf(vertex.box)) {
+			for (Vertex<Box> vertex : g.getVertices()) {
+				if (newVertex.getValue().canBeInsideOf(vertex.getValue())) {
 					vertex.addNeighbour(newVertex, 1);
 					inside = true;
 				}
@@ -135,59 +116,6 @@ public class NestedBoxes {
 				}
 			}
 		});
-	}
-
-	public static final class Graph {
-		private final List<Vertex> vertices = new ArrayList<Vertex>();
-
-		public void addVertex(@Nonnull Vertex vertex) {
-			vertices.add(vertex);
-		}
-
-		public void addVertexToTheStart(@Nonnull Vertex vertex) {
-			vertices.add(0, vertex);
-		}
-	}
-
-	private static final class Vertex {
-
-		@Nullable
-		private Vertex predecessor;
-		private int weight = Integer.MIN_VALUE;
-
-		@Nonnull
-		private final Box box;
-
-		@Nonnull
-		private final List<Edge> edges = new ArrayList<Edge>();
-
-		private Vertex(@Nonnull Box box) {
-			this.box = box;
-		}
-
-		private static Vertex newVertex(@Nonnull Box box) {
-			return new Vertex(box);
-		}
-
-		public void addNeighbour(@Nonnull Vertex neighbour, int weight) {
-			edges.add(Edge.newEdge(this, neighbour, weight));
-		}
-	}
-
-	private static final class Edge {
-		private final Vertex from;
-		private final Vertex to;
-		private final int weight;
-
-		private Edge(Vertex from, Vertex to, int weight) {
-			this.from = from;
-			this.to = to;
-			this.weight = weight;
-		}
-
-		private static Edge newEdge(Vertex from, Vertex to, int weight) {
-			return new Edge(from, to, weight);
-		}
 	}
 
 	public static class Box {

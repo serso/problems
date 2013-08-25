@@ -41,10 +41,10 @@ public class DisjointContiguousSubArrayProblemTest {
 
 	@Test
 	public void testSolve() throws Exception {
-		assertEquals(19, solve(new int[]{1, 2, 3, 4, 5, 6}));
 		assertEquals(16, solve(new int[]{2, -1, -2, 1, -4, 2, 8}));
 		assertEquals(4, solve(new int[]{1, 1, -1, -1}));
 		assertEquals(13, solve(new int[]{1, 2, 3, 4, 5}));
+		assertEquals(19, solve(new int[]{1, 2, 3, 4, 5, 6}));
 	}
 
 	@Test
