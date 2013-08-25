@@ -16,6 +16,8 @@ import static org.solovyev.problems.NestedBoxes.Box.newEmptyBox;
  * Date: 8/25/13
  * Time: 3:15 PM
  */
+
+// "Introduction to algorithms": 24-2
 public class NestedBoxes {
 
 	@Nonnull
