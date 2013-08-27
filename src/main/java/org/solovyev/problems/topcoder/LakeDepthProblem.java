@@ -46,21 +46,25 @@ public class LakeDepthProblem {
 
 	private static int[][] calculateDepths(@Nonnull Matrix heights) {
 		final int[][] depths = initWith(heights.height, heights.width, NOT_VISITED);
+		final int[][] maxHeights = initWith(heights.height, heights.width, NOT_VISITED);
 
 		for (int i = 0; i < heights.height; i++) {
 			for (int j = 0; j < heights.width; j++) {
-				calculateHeight(heights, depths, i, j, heights.get(i, j));
+				maxHeights[i][j] = calculateHeight(heights, depths, maxHeights, i, j);
 			}
 		}
 
 		return depths;
 	}
 
-	private static int calculateHeight(@Nonnull Matrix heights, int[][] depths, int i, int j, int height) {
-		if(depths[i][j] == VISITING) {
-			return Math.max(height, heights.get(i, j));
+	private static int calculateHeight(@Nonnull Matrix heights, int[][] depths, int[][] maxHeights, int i, int j) {
+		if(maxHeights[i][j] >= 0) {
+			return maxHeights[i][j];
 		}
 
+		if(depths[i][j] == VISITING) {
+			return Integer.MAX_VALUE;
+		}
 
 		depths[i][j] = VISITING;
 
@@ -70,21 +74,16 @@ public class LakeDepthProblem {
 			return heights.get(i, j);
 		}
 
-		if(height <= heights.get(i, j)) {
-			height = heights.get(i, j);
-		} else {
-			return height;
-		}
+		final int leftHeight = calculateHeight(heights, depths, maxHeights, i, j - 1);
+		final int upHeight = calculateHeight(heights, depths, maxHeights, i - 1, j);
+		final int rightHeight = calculateHeight(heights, depths, maxHeights, i, j + 1);
+		final int bottomHeight = calculateHeight(heights, depths, maxHeights, i + 1, j);
 
-		final int leftHeight = calculateHeight(heights, depths, i, j - 1, height);
-		final int upHeight = calculateHeight(heights, depths, i - 1, j, height);
-		final int rightHeight = calculateHeight(heights, depths, i, j + 1, height);
-		final int bottomHeight = calculateHeight(heights, depths, i + 1, j, height);
+		final int height = Math.min(Math.min(leftHeight, rightHeight), Math.min(bottomHeight, upHeight));
 
-		height = Math.min(Math.min(leftHeight, rightHeight), Math.min(bottomHeight, upHeight));
-		depths[i][j] = height - heights.get(i, j);
+		depths[i][j] = Math.max(0, height - heights.get(i, j));
 
-		return height;
+		return Math.max(height, heights.get(i, j));
 	}
 
 	private static int[][] calculateHeights(String[] plot) {
