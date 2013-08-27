@@ -1,8 +1,7 @@
 package org.solovyev.problems.topcoder;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import static java.lang.Character.isDigit;
 
 /**
  * User: serso
@@ -12,36 +11,25 @@ import static java.lang.Character.isDigit;
 // http://community.topcoder.com/stat?c=problem_statement&pm=3101&rd=5886
 public class LakeDepthProblem {
 
+	public static final int VISITING = -1;
+	public static final int NOT_VISITED = -2;
+
 	public static int depth(String[] plot) {
 		int depth = 0;
 
 		int[][] heights = calculateHeights(plot);
 
-		int[][] maxHeights = calculateMaxHeights(heights);
-		int[][] minHeights = calculateMinHeights(heights);
+		int[][] depths = calculateDepths(new Matrix(plot));
 		print(heights, "Input");
-		print(maxHeights, "Max heights");
-		print(minHeights, "Min heights");
+		print(depths, "Depths");
 
 		for (int i = 0; i < heights.length; i++) {
 			for (int j = 0; j < heights[i].length; j++) {
-				depth = Math.max(depth, maxHeights[i][j] - minHeights[i][j]);
+				depth = Math.max(depth, depths[i][j]);
 			}
 		}
 
 		return depth;
-	}
-
-	private static int[][] calculateMinHeights(int[][] heights) {
-		final int[][] minHeights = initWith(heights.length, heights[0].length, Integer.MAX_VALUE);
-
-		for (int i = 0; i < heights.length; i++) {
-			for (int j = 0; j < heights[i].length; j++) {
-				calculateMinHeight(heights, minHeights, i, j);
-			}
-		}
-
-		return minHeights;
 	}
 
 	private static int[][] initWith(int height, int width, int value) {
@@ -56,94 +44,47 @@ public class LakeDepthProblem {
 		return m;
 	}
 
-	private static int[][] calculateMaxHeights(int[][] heights) {
-		final int[][] maxHeights = initWith(heights.length, heights[0].length, -1);
+	private static int[][] calculateDepths(@Nonnull Matrix heights) {
+		final int[][] depths = initWith(heights.height, heights.width, NOT_VISITED);
 
-		for (int i = 0; i < heights.length; i++) {
-			for (int j = 0; j < heights[i].length; j++) {
-				calculateMaxHeight(heights, maxHeights, i, j);
+		for (int i = 0; i < heights.height; i++) {
+			for (int j = 0; j < heights.width; j++) {
+				calculateHeight(heights, depths, i, j, heights.get(i, j));
 			}
 		}
 
-		return maxHeights;
+		return depths;
 	}
 
-	private static int calculateMinHeight(int[][] heights, int[][] minHeights, int i, int j) {
-		if (minHeights[i][j] != Integer.MAX_VALUE) {
-			return minHeights[i][j];
+	private static int calculateHeight(@Nonnull Matrix heights, int[][] depths, int i, int j, int height) {
+		if(depths[i][j] == VISITING) {
+			return Math.max(height, heights.get(i, j));
 		}
 
-		minHeights[i][j] = heights[i][j];
-		if (j == 0 || i == 0 || j == heights[0].length - 1 || i == heights.length - 1) {
-			return minHeights[i][j];
+
+		depths[i][j] = VISITING;
+
+		if (i == 0 || j == 0 || i == heights.height - 1 || j == heights.width - 1) {
+			depths[i][j] = 0;
+
+			return heights.get(i, j);
 		}
 
-		// left
-		int left = 0;
-		if (j > 0) {
-			left = calculateMinHeight(heights, minHeights, i, j - 1);
+		if(height <= heights.get(i, j)) {
+			height = heights.get(i, j);
+		} else {
+			return height;
 		}
 
-		// up
-		int up = 0;
-		if (i > 0) {
-			up = calculateMinHeight(heights, minHeights, i - 1, j);
-		}
+		final int leftHeight = calculateHeight(heights, depths, i, j - 1, height);
+		final int upHeight = calculateHeight(heights, depths, i - 1, j, height);
+		final int rightHeight = calculateHeight(heights, depths, i, j + 1, height);
+		final int bottomHeight = calculateHeight(heights, depths, i + 1, j, height);
 
-		// right
-		int right = 0;
-/*		if (j < heights[0].length - 1) {
-			right = calculateMinHeight(heights, minHeights, i, j + 1);
-		}*/
+		height = Math.min(Math.min(leftHeight, rightHeight), Math.min(bottomHeight, upHeight));
+		depths[i][j] = height - heights.get(i, j);
 
-		// down
-		int down = 0;
-/*		if (i < heights.length - 1) {
-			down = calculateMinHeight(heights, minHeights, i + 1, j);
-		}*/
-
-		minHeights[i][j] = Math.min(minHeights[i][j], Math.max(Math.max(left, right), Math.max(up, down)));
-
-		return minHeights[i][j];
-	}
-
-	private static int calculateMaxHeight(int[][] heights, int[][] maxHeights, int i, int j) {
-		if (maxHeights[i][j] >= 0) {
-			return maxHeights[i][j];
-		}
-
-		maxHeights[i][j] = heights[i][j];
-		if (j == 0 || i == 0 || j == heights[0].length - 1 || i == heights.length - 1) {
-			return maxHeights[i][j];
-		}
-
-		// left
-		int left = Integer.MAX_VALUE;
-		if (j > 0) {
-			left = calculateMaxHeight(heights, maxHeights, i, j - 1);
-		}
-
-		// up
-		int up = Integer.MAX_VALUE;
-		if (i > 0) {
-			up = calculateMaxHeight(heights, maxHeights, i - 1, j);
-		}
-
-		// right
-		int right = Integer.MAX_VALUE;
-/*		if (j < heights[0].length - 1) {
-			right = calculateMaxHeight(heights, maxHeights, i, j + 1);
-		}*/
-
-		// down
-		int down = Integer.MAX_VALUE;
-/*		if (i < heights.length - 1) {
-			down = calculateMaxHeight(heights, maxHeights, i + 1, j);
-		}*/
-
-		maxHeights[i][j] = Math.max(maxHeights[i][j], Math.min(Math.min(left, right), Math.min(up, down)));
-
-		return maxHeights[i][j];
+		return height;
 	}
 
 	private static int[][] calculateHeights(String[] plot) {
@@ -167,6 +108,25 @@ public class LakeDepthProblem {
 				System.out.print(element + "\t");
 			}
 			System.out.println();
+		}
+	}
+
+	private static final class Matrix {
+
+		@Nonnull
+		private final String[] rows;
+
+		private final int height;
+		private final int width;
+
+		private Matrix(@Nonnull String[] rows) {
+			this.rows = rows;
+			this.height = rows.length;
+			this.width = rows[0].length();
+		}
+
+		private int get(int i, int j) {
+			return rows[i].charAt(j) - 32;
 		}
 	}
 }
