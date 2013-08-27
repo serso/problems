@@ -3,6 +3,9 @@ package org.solovyev.problems.topcoder;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+
 /**
  * User: serso
  * Date: 8/21/13
@@ -17,15 +20,13 @@ public class LakeDepthProblem {
 	public static int depth(String[] plot) {
 		int depth = 0;
 
-		int[][] heights = calculateHeights(plot);
-
-		int[][] depths = calculateDepths(new Matrix(plot));
-		print(heights, "Input");
+		final Matrix heights = new Matrix(plot);
+		final int[][] depths = calculateDepths(heights);
 		print(depths, "Depths");
 
-		for (int i = 0; i < heights.length; i++) {
-			for (int j = 0; j < heights[i].length; j++) {
-				depth = Math.max(depth, depths[i][j]);
+		for (int i = 0; i < heights.height; i++) {
+			for (int j = 0; j < heights.width; j++) {
+				depth = max(depth, depths[i][j]);
 			}
 		}
 
@@ -46,7 +47,7 @@ public class LakeDepthProblem {
 
 	private static int[][] calculateDepths(@Nonnull Matrix heights) {
 		final int[][] depths = initWith(heights.height, heights.width, NOT_VISITED);
-		final int[][] maxHeights = initWith(heights.height, heights.width, NOT_VISITED);
+		final int[][] maxHeights = initWith(heights.height, heights.width, -1);
 
 		for (int i = 0; i < heights.height; i++) {
 			for (int j = 0; j < heights.width; j++) {
@@ -70,7 +71,6 @@ public class LakeDepthProblem {
 
 		if (i == 0 || j == 0 || i == heights.height - 1 || j == heights.width - 1) {
 			depths[i][j] = 0;
-
 			return heights.get(i, j);
 		}
 
@@ -79,22 +79,11 @@ public class LakeDepthProblem {
 		final int rightHeight = calculateHeight(heights, depths, maxHeights, i, j + 1);
 		final int bottomHeight = calculateHeight(heights, depths, maxHeights, i + 1, j);
 
-		final int height = Math.min(Math.min(leftHeight, rightHeight), Math.min(bottomHeight, upHeight));
+		final int height = min(min(leftHeight, rightHeight), min(bottomHeight, upHeight));
 
-		depths[i][j] = Math.max(0, height - heights.get(i, j));
+		depths[i][j] = max(0, height - heights.get(i, j));
 
-		return Math.max(height, heights.get(i, j));
-	}
-
-	private static int[][] calculateHeights(String[] plot) {
-		final int[][] heights = new int[plot.length][plot[0].length()];
-		for (int i = 0; i < plot.length; i++) {
-			for (int j = 0; j < plot[i].length(); j++) {
-				final Character ch = plot[i].charAt(j);
-				heights[i][j] = ch - 32;
-			}
-		}
-		return heights;
+		return max(height, heights.get(i, j));
 	}
 
 	private static void print(int[][] m, @Nullable String name) {
