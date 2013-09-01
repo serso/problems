@@ -1,6 +1,8 @@
 package org.solovyev.problems.googlecodejam;
 
+import org.junit.Assert;
 import org.junit.Test;
+import org.solovyev.common.text.Strings;
 
 import javax.annotation.Nonnull;
 
@@ -18,8 +20,8 @@ public class AlienLanguage2Test {
 	public void testSolve() throws Exception {
 		System.out.println(toString(getPattern("(ab)c(de)", 3)));
 		System.out.println(toString(getPattern("nwlr(nqxb)bm(dgqw)bh", 10)));
-		System.out.println(solve(AlienLanguage2Test.class.getResourceAsStream("A-small-practice.in")));
-		System.out.println(solve(AlienLanguage2Test.class.getResourceAsStream("A-large-practice.in")));
+		Assert.assertEquals(Strings.convertStream(AlienLanguage2Test.class.getResourceAsStream("A-small-practice.out")), solve(AlienLanguage2Test.class.getResourceAsStream("A-small-practice.in")));
+		Assert.assertEquals(Strings.convertStream(AlienLanguage2Test.class.getResourceAsStream("A-large-practice.out")), solve(AlienLanguage2Test.class.getResourceAsStream("A-large-practice.in")));
 	}
 
 	@Nonnull

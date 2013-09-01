@@ -57,6 +57,7 @@ public class Watersheds {
 			int col = 0;
 			for (String altitude : line.split(" ")) {
 				map[row][col] = Integer.valueOf(altitude);
+				col++;
 			}
 			row++;
 		}
@@ -158,21 +159,6 @@ public class Watersheds {
 			}
 		}
 
-		/*if(row > 0) {
-			visit(map, names, rows, cols, row - 1, col);
-		}
-
-		if(col > 0) {
-			visit(map, names, rows, cols, row, col - 1);
-		}
-
-		if(row < rows - 1) {
-			visit(map, names, rows, cols, row + 1, col);
-		}
-
-		if(col < cols - 1) {
-			visit(map, names, rows, cols, row, col + 1);
-		}*/
 		return false;
 	}
 

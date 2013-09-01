@@ -1,6 +1,7 @@
 package org.solovyev.problems.googlecodejam;
 
 import org.junit.Test;
+import org.solovyev.common.text.Strings;
 
 import static org.junit.Assert.assertEquals;
 
@@ -39,6 +40,23 @@ public class WatershedsTest {
 				{3, 3, 0, 8, 7},
 				{4, 9, 8, 9, 8},
 				{5, 6, 7, 8, 9}}, 5, 5));
-		System.out.println(Watersheds.solve(getClass().getResourceAsStream("B-small-practice.in")));
+		assertEquals("a a a a a\n" +
+				"a a a a a\n" +
+				"a a a a a\n" +
+				"a a a a a\n" +
+				"a a a a a\n" +
+				"a a a a a\n" +
+				"a a a a a\n" +
+				"a a a a a", Watersheds.solve(new int[][]{
+				{7, 6, 5, 4, 5},
+				{6, 5, 4, 3, 4},
+				{5, 4, 3, 2, 3},
+				{4, 3, 2, 1, 2},
+				{3, 2, 1, 0, 1},
+				{4, 3, 2, 1, 2},
+				{5, 4, 3, 2, 3},
+				{6, 5, 4, 3, 4}}, 8, 5));
+		assertEquals(Strings.convertStream(getClass().getResourceAsStream("B-small-practice.out")), Watersheds.solve(getClass().getResourceAsStream("B-small-practice.in")));
+		assertEquals(Strings.convertStream(getClass().getResourceAsStream("B-large-practice.out")), Watersheds.solve(getClass().getResourceAsStream("B-large-practice.in")));
 	}
 }
