@@ -69,16 +69,20 @@ public class Watersheds {
 	static String solve(int[][] map, int rows, int cols) {
 		offset = 0;
 
-		char[][] names = new char[rows][cols];
+		char[][] basins = new char[rows][cols];
 		for (int row = 0; row < rows; row++) {
 			for (int col = 0; col < cols; col++) {
-				boolean alreadyVisited = visit(map, names, rows, cols, row, col);
+				boolean alreadyVisited = visit(map, basins, rows, cols, row, col);
 				if (!alreadyVisited) {
 					nextName();
 				}
 			}
 		}
 
+		return toString(rows, cols, basins);
+	}
+
+	private static String toString(int rows, int cols, char[][] basins) {
 		final StringBuilder result = new StringBuilder();
 		for (int row = 0; row < rows; row++) {
 			if(row > 0){
@@ -88,7 +92,7 @@ public class Watersheds {
 				if(col > 0) {
 					result.append(" ");
 				}
-				result.append(names[row][col]);
+				result.append(basins[row][col]);
 			}
 		}
 		return result.toString();
@@ -98,13 +102,13 @@ public class Watersheds {
 		offset++;
 	}
 
-	private static boolean visit(int[][] map, char[][] names, int rows, int cols, int row, int col) {
-		if (names[row][col] != 0) {
+	private static boolean visit(int[][] map, char[][] basins, int rows, int cols, int row, int col) {
+		if (basins[row][col] != 0) {
 			return true;
 		}
 
 		final int height = map[row][col];
-		names[row][col] = getName();
+		basins[row][col] = getName();
 
 		int north = Integer.MAX_VALUE;
 		if (row > 0) {
@@ -128,33 +132,33 @@ public class Watersheds {
 
 		boolean alreadyVisited = true;
 		if (alreadyVisited && north != Integer.MAX_VALUE && north < height && north <= west && north <= south && north <= east) {
-			alreadyVisited = visit(map, names, rows, cols, row - 1, col);
+			alreadyVisited = visit(map, basins, rows, cols, row - 1, col);
 			if (alreadyVisited) {
-				names[row][col] = names[row - 1][col];
+				basins[row][col] = basins[row - 1][col];
 				return true;
 			}
 		}
 
 		if (alreadyVisited && west != Integer.MAX_VALUE && west < height && west <= north && west <= south && west <= east) {
-			alreadyVisited = visit(map, names, rows, cols, row, col - 1);
+			alreadyVisited = visit(map, basins, rows, cols, row, col - 1);
 			if (alreadyVisited) {
-				names[row][col] = names[row][col - 1];
+				basins[row][col] = basins[row][col - 1];
 				return true;
 			}
 		}
 
 		if (alreadyVisited && east != Integer.MAX_VALUE && east < height && east <= north && east <= south && east <= west) {
-			alreadyVisited = visit(map, names, rows, cols, row, col + 1);
+			alreadyVisited = visit(map, basins, rows, cols, row, col + 1);
 			if (alreadyVisited) {
-				names[row][col] = names[row][col + 1];
+				basins[row][col] = basins[row][col + 1];
 				return true;
 			}
 		}
 
 		if (alreadyVisited && south != Integer.MAX_VALUE && south < height && south <= north && south <= west && south <= east) {
-			alreadyVisited = visit(map, names, rows, cols, row + 1, col);
+			alreadyVisited = visit(map, basins, rows, cols, row + 1, col);
 			if (alreadyVisited) {
-				names[row][col] = names[row + 1][col];
+				basins[row][col] = basins[row + 1][col];
 				return true;
 			}
 		}
