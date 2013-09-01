@@ -15,8 +15,6 @@ import static org.solovyev.common.Charsets.UTF_8;
  */
 public class Watersheds {
 
-	private static char offset = 0;
-
 	static String solve(@Nonnull InputStream is) throws IOException {
 		final StringBuilder result = new StringBuilder();
 
@@ -67,14 +65,15 @@ public class Watersheds {
 
 	@Nonnull
 	static String solve(int[][] map, int rows, int cols) {
-		offset = 0;
-
 		char[][] basins = new char[rows][cols];
+
+		char name = 'a';
+
 		for (int row = 0; row < rows; row++) {
 			for (int col = 0; col < cols; col++) {
-				boolean alreadyVisited = visit(map, basins, rows, cols, row, col);
+				boolean alreadyVisited = visit(map, basins, rows, cols, row, col, name);
 				if (!alreadyVisited) {
-					nextName();
+					name++;
 				}
 			}
 		}
@@ -98,17 +97,13 @@ public class Watersheds {
 		return result.toString();
 	}
 
-	private static void nextName() {
-		offset++;
-	}
-
-	private static boolean visit(int[][] map, char[][] basins, int rows, int cols, int row, int col) {
+	private static boolean visit(int[][] map, char[][] basins, int rows, int cols, int row, int col, char name) {
 		if (basins[row][col] != 0) {
 			return true;
 		}
 
 		final int height = map[row][col];
-		basins[row][col] = getName();
+		basins[row][col] = name;
 
 		int north = Integer.MAX_VALUE;
 		if (row > 0) {
@@ -132,7 +127,7 @@ public class Watersheds {
 
 		boolean alreadyVisited = true;
 		if (alreadyVisited && north != Integer.MAX_VALUE && north < height && north <= west && north <= south && north <= east) {
-			alreadyVisited = visit(map, basins, rows, cols, row - 1, col);
+			alreadyVisited = visit(map, basins, rows, cols, row - 1, col, name);
 			if (alreadyVisited) {
 				basins[row][col] = basins[row - 1][col];
 				return true;
@@ -140,7 +135,7 @@ public class Watersheds {
 		}
 
 		if (alreadyVisited && west != Integer.MAX_VALUE && west < height && west <= north && west <= south && west <= east) {
-			alreadyVisited = visit(map, basins, rows, cols, row, col - 1);
+			alreadyVisited = visit(map, basins, rows, cols, row, col - 1, name);
 			if (alreadyVisited) {
 				basins[row][col] = basins[row][col - 1];
 				return true;
@@ -148,7 +143,7 @@ public class Watersheds {
 		}
 
 		if (alreadyVisited && east != Integer.MAX_VALUE && east < height && east <= north && east <= south && east <= west) {
-			alreadyVisited = visit(map, basins, rows, cols, row, col + 1);
+			alreadyVisited = visit(map, basins, rows, cols, row, col + 1, name);
 			if (alreadyVisited) {
 				basins[row][col] = basins[row][col + 1];
 				return true;
@@ -156,7 +151,7 @@ public class Watersheds {
 		}
 
 		if (alreadyVisited && south != Integer.MAX_VALUE && south < height && south <= north && south <= west && south <= east) {
-			alreadyVisited = visit(map, basins, rows, cols, row + 1, col);
+			alreadyVisited = visit(map, basins, rows, cols, row + 1, col, name);
 			if (alreadyVisited) {
 				basins[row][col] = basins[row + 1][col];
 				return true;
@@ -164,9 +159,5 @@ public class Watersheds {
 		}
 
 		return false;
-	}
-
-	private static char getName() {
-		return (char) ('a' + offset);
 	}
 }
