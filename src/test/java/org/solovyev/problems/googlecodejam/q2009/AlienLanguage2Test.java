@@ -1,4 +1,4 @@
-package org.solovyev.problems.googlecodejam;
+package org.solovyev.problems.googlecodejam.q2009;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -6,8 +6,8 @@ import org.solovyev.common.text.Strings;
 
 import javax.annotation.Nonnull;
 
-import static org.solovyev.problems.googlecodejam.AlienLanguage2.getPattern;
-import static org.solovyev.problems.googlecodejam.AlienLanguage2.solve;
+import static org.solovyev.problems.googlecodejam.q2009.AlienLanguage2.getPattern;
+import static org.solovyev.problems.googlecodejam.q2009.AlienLanguage2.solve;
 
 /**
  * User: serso

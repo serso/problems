@@ -1,7 +1,8 @@
-package org.solovyev.problems.googlecodejam;
+package org.solovyev.problems.googlecodejam.q2009;
 
 import org.junit.Test;
 import org.solovyev.common.text.Strings;
+import org.solovyev.problems.googlecodejam.q2009.Watersheds2;
 
 import static org.junit.Assert.assertEquals;
 

@@ -1,4 +1,4 @@
-package org.solovyev.problems.googlecodejam;
+package org.solovyev.problems.googlecodejam.q2009;
 
 import javax.annotation.Nonnull;
 import java.io.BufferedReader;

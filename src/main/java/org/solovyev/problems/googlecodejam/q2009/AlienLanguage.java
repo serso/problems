@@ -1,10 +1,11 @@
-package org.solovyev.problems.googlecodejam;
+package org.solovyev.problems.googlecodejam.q2009;
 
 import javax.annotation.Nonnull;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.*;
 
 import static org.solovyev.common.Charsets.UTF_8;
 
@@ -13,9 +14,7 @@ import static org.solovyev.common.Charsets.UTF_8;
  * Date: 9/1/13
  * Time: 12:52 PM
  */
-public class AlienLanguage2 {
-
-	public static final int LATIN_ALPHABET_COUNT = 26;
+public class AlienLanguage {
 
 	static String solve(@Nonnull InputStream is) throws IOException {
 		final StringBuilder result = new StringBuilder();
@@ -24,21 +23,21 @@ public class AlienLanguage2 {
 
 		final String firstLine = sr.readLine();
 		final String[] arguments = firstLine.split(" ");
-		final int wordLength = Integer.valueOf(arguments[0]);
+		final int length = Integer.valueOf(arguments[0]);
 
 		final int dictionarySize = Integer.valueOf(arguments[1]);
 		int dictionaryCounter = 0;
 		final int testCasesCount = Integer.valueOf(arguments[2]);
 		int testCaseCounter = 0;
 
-		final char[][] dictionary = new char[dictionarySize][wordLength];
+		final Set<String> dictionary = new HashSet<String>();
 		String line = sr.readLine();
 		while (line != null) {
 			if (dictionaryCounter < dictionarySize) {
-				addWord(dictionary, dictionaryCounter, line);
+				dictionary.add(line);
 				dictionaryCounter++;
 			} else if(testCaseCounter < testCasesCount) {
-				result.append(solve(dictionary, line, wordLength, testCaseCounter));
+				result.append(solve(dictionary, line, length, testCaseCounter));
 				result.append("\n");
 				testCaseCounter++;
 			} else {
@@ -51,29 +50,10 @@ public class AlienLanguage2 {
 		return result.toString();
 	}
 
-	private static void addWord(char[][] dictionary, int dictionaryCounter, String word) {
-		for (int i = 0; i < word.length(); i++) {
-			dictionary[dictionaryCounter][i] = word.charAt(i);
-		}
-	}
-
-	private static String solve(@Nonnull char[][] dictionary, @Nonnull String patternWord, int length, int testCase) {
-		boolean[][] pattern = getPattern(patternWord, length);
-
+	private static String solve(@Nonnull Set<String> dictionary, @Nonnull String pattern, int length, int testCase) {
 		int counter = 0;
-
-		for (char[] word : dictionary) {
-			boolean contains = true;
-
-			for (int i = 0; i < word.length; i++) {
-				final char letter = word[i];
-				if (!pattern[i][getCharPosition(letter)]) {
-					contains = false;
-					break;
-				}
-			}
-
-			if(contains) {
+		for (CharSequence word : getWords(pattern)) {
+			if (dictionary.contains(word.toString())) {
 				counter++;
 			}
 		}
@@ -81,9 +61,9 @@ public class AlienLanguage2 {
 	}
 
 	@Nonnull
-	static boolean[][] getPattern(@Nonnull String pattern, int length) {
-		boolean[][] result = new boolean[length][LATIN_ALPHABET_COUNT];
-		int j = 0;
+	static List<? extends CharSequence> getWords(@Nonnull String pattern) {
+		List<StringBuilder> words = new ArrayList<StringBuilder>();
+		words.add(new StringBuilder());
 
 		boolean inBrackets = false;
 		for (int i = 0; i < pattern.length(); i++) {
@@ -97,6 +77,7 @@ public class AlienLanguage2 {
 					break;
 				default:
 					if (inBrackets) {
+						final List<StringBuilder> newWords = new ArrayList<StringBuilder>();
 						for (; i < pattern.length(); i++) {
 							c = pattern.charAt(i);
 							switch (c) {
@@ -104,24 +85,23 @@ public class AlienLanguage2 {
 									inBrackets = false;
 									break;
 								default:
-									result[j][getCharPosition(c)] = true;
+									for (StringBuilder word : words) {
+										newWords.add(new StringBuilder(word).append(c));
+									}
 							}
 							if (!inBrackets) {
 								break;
 							}
 						}
-						j++;
+						words = newWords;
 					} else {
-						result[j][getCharPosition(c)] = true;
-						j++;
+						for (StringBuilder word : words) {
+							word.append(c);
+						}
 					}
 			}
 		}
 
-		return result;
-	}
-
-	private static int getCharPosition(char c) {
-		return c - 'a';
+		return words;
 	}
 }

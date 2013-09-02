@@ -1,9 +1,9 @@
-package org.solovyev.problems.googlecodejam;
+package org.solovyev.problems.googlecodejam.q2009;
 
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.solovyev.problems.googlecodejam.AlienLanguage.getWords;
+import static org.solovyev.problems.googlecodejam.q2009.AlienLanguage.getWords;
 
 /**
  * User: serso

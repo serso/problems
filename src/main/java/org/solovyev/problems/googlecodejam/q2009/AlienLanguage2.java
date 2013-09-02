@@ -1,11 +1,10 @@
-package org.solovyev.problems.googlecodejam;
+package org.solovyev.problems.googlecodejam.q2009;
 
 import javax.annotation.Nonnull;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.*;
 
 import static org.solovyev.common.Charsets.UTF_8;
 
@@ -14,7 +13,9 @@ import static org.solovyev.common.Charsets.UTF_8;
  * Date: 9/1/13
  * Time: 12:52 PM
  */
-public class AlienLanguage {
+public class AlienLanguage2 {
+
+	public static final int LATIN_ALPHABET_COUNT = 26;
 
 	static String solve(@Nonnull InputStream is) throws IOException {
 		final StringBuilder result = new StringBuilder();
@@ -23,21 +24,21 @@ public class AlienLanguage {
 
 		final String firstLine = sr.readLine();
 		final String[] arguments = firstLine.split(" ");
-		final int length = Integer.valueOf(arguments[0]);
+		final int wordLength = Integer.valueOf(arguments[0]);
 
 		final int dictionarySize = Integer.valueOf(arguments[1]);
 		int dictionaryCounter = 0;
 		final int testCasesCount = Integer.valueOf(arguments[2]);
 		int testCaseCounter = 0;
 
-		final Set<String> dictionary = new HashSet<String>();
+		final char[][] dictionary = new char[dictionarySize][wordLength];
 		String line = sr.readLine();
 		while (line != null) {
 			if (dictionaryCounter < dictionarySize) {
-				dictionary.add(line);
+				addWord(dictionary, dictionaryCounter, line);
 				dictionaryCounter++;
 			} else if(testCaseCounter < testCasesCount) {
-				result.append(solve(dictionary, line, length, testCaseCounter));
+				result.append(solve(dictionary, line, wordLength, testCaseCounter));
 				result.append("\n");
 				testCaseCounter++;
 			} else {
@@ -50,10 +51,29 @@ public class AlienLanguage {
 		return result.toString();
 	}
 
-	private static String solve(@Nonnull Set<String> dictionary, @Nonnull String pattern, int length, int testCase) {
+	private static void addWord(char[][] dictionary, int dictionaryCounter, String word) {
+		for (int i = 0; i < word.length(); i++) {
+			dictionary[dictionaryCounter][i] = word.charAt(i);
+		}
+	}
+
+	private static String solve(@Nonnull char[][] dictionary, @Nonnull String patternWord, int length, int testCase) {
+		boolean[][] pattern = getPattern(patternWord, length);
+
 		int counter = 0;
-		for (CharSequence word : getWords(pattern)) {
-			if (dictionary.contains(word.toString())) {
+
+		for (char[] word : dictionary) {
+			boolean contains = true;
+
+			for (int i = 0; i < word.length; i++) {
+				final char letter = word[i];
+				if (!pattern[i][getCharPosition(letter)]) {
+					contains = false;
+					break;
+				}
+			}
+
+			if(contains) {
 				counter++;
 			}
 		}
@@ -61,9 +81,9 @@ public class AlienLanguage {
 	}
 
 	@Nonnull
-	static List<? extends CharSequence> getWords(@Nonnull String pattern) {
-		List<StringBuilder> words = new ArrayList<StringBuilder>();
-		words.add(new StringBuilder());
+	static boolean[][] getPattern(@Nonnull String pattern, int length) {
+		boolean[][] result = new boolean[length][LATIN_ALPHABET_COUNT];
+		int j = 0;
 
 		boolean inBrackets = false;
 		for (int i = 0; i < pattern.length(); i++) {
@@ -77,7 +97,6 @@ public class AlienLanguage {
 					break;
 				default:
 					if (inBrackets) {
-						final List<StringBuilder> newWords = new ArrayList<StringBuilder>();
 						for (; i < pattern.length(); i++) {
 							c = pattern.charAt(i);
 							switch (c) {
@@ -85,23 +104,24 @@ public class AlienLanguage {
 									inBrackets = false;
 									break;
 								default:
-									for (StringBuilder word : words) {
-										newWords.add(new StringBuilder(word).append(c));
-									}
+									result[j][getCharPosition(c)] = true;
 							}
 							if (!inBrackets) {
 								break;
 							}
 						}
-						words = newWords;
+						j++;
 					} else {
-						for (StringBuilder word : words) {
-							word.append(c);
-						}
+						result[j][getCharPosition(c)] = true;
+						j++;
 					}
 			}
 		}
 
-		return words;
+		return result;
+	}
+
+	private static int getCharPosition(char c) {
+		return c - 'a';
 	}
 }
