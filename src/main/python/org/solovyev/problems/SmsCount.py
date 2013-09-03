@@ -1,3 +1,5 @@
+import unittest
+
 # http://habrahabr.ru/post/191498/
 
 
@@ -27,6 +29,17 @@ def getCount(m, i, j):
     return m[i][j]
 
 
-k = int(input("Enter k: \n"))
+class CountStringsTests(unittest.TestCase):
+    def testOne(self):
+        self.assertEqual(8, countStrings(1))
 
-print("Total: " + repr(countStrings(k)))
+    def testTwo(self):
+        self.assertEqual(80, countStrings(2))
+
+
+def main():
+    unittest.main()
+
+
+if __name__ == '__main__':
+    main()
