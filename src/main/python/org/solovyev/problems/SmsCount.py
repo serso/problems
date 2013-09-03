@@ -1,8 +1,5 @@
 # http://habrahabr.ru/post/191498/
 
-k = int(input("Enter k: \n"))
-
-m = [[0 for x in range(k)] for x in range(k)]
 
 def getCount(m, i, j):
     if i == -1 and j == -1:
@@ -12,6 +9,9 @@ def getCount(m, i, j):
         return 0
 
     return m[i][j]
+
+k = int(input("Enter k: \n"))
+m = [[0 for x in range(k)] for x in range(k)]
 
 # i - length of the string
 # j - number of presses
