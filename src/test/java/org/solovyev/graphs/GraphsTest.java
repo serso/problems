@@ -6,10 +6,9 @@ import org.junit.Test;
 import javax.annotation.Nonnull;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.solovyev.graphs.Graphs.breadthFirstSearch;
-import static org.solovyev.graphs.Graphs.depthFirstSearch;
-import static org.solovyev.graphs.Graphs.findShortestPath;
+import static org.solovyev.graphs.Graphs.*;
 
 public class GraphsTest {
 
@@ -165,5 +164,23 @@ public class GraphsTest {
 		assertEquals(3, findShortestPath(g, x, u).getLength());
 		assertEquals(2, findShortestPath(g, x, y).getLength());
 
+	}
+
+	@Test
+	public void testFindShortestPaths() throws Exception {
+		final int i = Graphs.MAX_WEIGHT;
+		int[][] g = {
+				{0,	3,	8,	i,	-4},
+				{i,	0,	i,	1,	7},
+				{i,	4,	0,	i,	i},
+				{2,	i,	-5,	0,	i},
+				{i,	i,	i,	6,	0}};
+
+		final int[][] paths = findShortestPaths(g);
+		assertArrayEquals(new int[]{0,	1,	-3,	2,	-4}, paths[0]);
+		assertArrayEquals(new int[]{3,	0,	-4,	1,	-1}, paths[1]);
+		assertArrayEquals(new int[]{7,	4,	0,	5,	3}, paths[2]);
+		assertArrayEquals(new int[]{2,	-1,	-5,	0,	-2}, paths[3]);
+		assertArrayEquals(new int[]{8,	5,	1,	6,	0}, paths[4]);
 	}
 }

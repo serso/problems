@@ -15,6 +15,28 @@ public final class Graphs {
 	}
 
 	@Nonnull
+	public static <V> int[][] findShortestPaths(@Nonnull int[][] g) {
+		final int size = g.length;
+
+		final int[][] paths = new int[size][];
+		for (int i = 0; i < size; i++) {
+			paths[i] = Arrays.copyOf(g[i], size);
+		}
+
+		for (int k = 0; k < size; k++) {
+			for (int i = 0; i < size; i++) {
+				for (int j = 0; j < size; j++) {
+					if(paths[i][k] != MAX_WEIGHT && paths[k][j] != MAX_WEIGHT) {
+						paths[i][j] = Math.min(paths[i][j], paths[i][k] + paths[k][j]);
+					}
+				}
+			}
+		}
+
+		return paths;
+	}
+
+	@Nonnull
 	public static <V> Path<V> findShortestPath(@Nonnull Graph<V> g, @Nonnull Vertex<V> s, @Nonnull Vertex<V> d) {
 		return findPathDijkstra(g, s, d, true);
 	}
