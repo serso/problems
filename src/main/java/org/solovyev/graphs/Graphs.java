@@ -1,12 +1,9 @@
 package org.solovyev.graphs;
 
 import javax.annotation.Nonnull;
+import java.util.*;
 
-import java.util.ArrayDeque;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Queue;
-import java.util.Stack;
+import static org.solovyev.common.collections.Collections.reversed;
 
 public final class Graphs {
 
@@ -14,26 +11,38 @@ public final class Graphs {
 		throw new AssertionError();
 	}
 
-	static <V> void depthFirstSearch(@Nonnull Graph<V> graph, @Nonnull Visitor<V> visitor) {
+	static <V> void depthFirstSearch(@Nonnull Graph<V> graph, @Nonnull Vertex<V> source, @Nonnull Visitor<V> visitor) {
 		final Graph<SearchVertexValue<V>> newGraph = prepareGraph(graph);
 
 		final Stack<Vertex<SearchVertexValue<V>>> stack = new Stack<Vertex<SearchVertexValue<V>>>();
-		for (Vertex<SearchVertexValue<V>> v : newGraph.getVertices()) {
-			stack.add(v);
-		}
+		stack.add(findVertex(newGraph, source));
 
 		while (!stack.isEmpty()) {
 			depthFirstSearchVisit(stack.pop(), stack, visitor);
 		}
 	}
 
-	static <V> void breadthFirstSearch(@Nonnull Graph<V> graph, @Nonnull Visitor<V> visitor) {
+	@Nonnull
+	private static <V> Vertex<SearchVertexValue<V>> findVertex(@Nonnull Graph<SearchVertexValue<V>> newGraph, @Nonnull Vertex<V> source) {
+		Vertex<SearchVertexValue<V>> newSource = null;
+		for (Vertex<SearchVertexValue<V>> newVertex : newGraph.getVertices()) {
+			if (newVertex.getValue().value.equals(source)) {
+				newSource = newVertex;
+				break;
+			}
+		}
+
+		if (newSource == null) {
+			throw new IllegalArgumentException("Source vertex doesn't belong to graph");
+		}
+		return newSource;
+	}
+
+	static <V> void breadthFirstSearch(@Nonnull Graph<V> graph, @Nonnull Vertex<V> source, @Nonnull Visitor<V> visitor) {
 		final Graph<SearchVertexValue<V>> newGraph = prepareGraph(graph);
 
 		final Queue<Vertex<SearchVertexValue<V>>> queue = new ArrayDeque<Vertex<SearchVertexValue<V>>>(graph.getVertices().size());
-		for (Vertex<SearchVertexValue<V>> v : newGraph.getVertices()) {
-			queue.add(v);
-		}
+		queue.add(findVertex(newGraph, source));
 
 		while (!queue.isEmpty()) {
 			breadthFirstSearchVisit(queue.poll(), queue, visitor);
@@ -41,7 +50,7 @@ public final class Graphs {
 	}
 
 	private static <V> void breadthFirstSearchVisit(@Nonnull Vertex<SearchVertexValue<V>> v, @Nonnull Queue<Vertex<SearchVertexValue<V>>> queue, @Nonnull Visitor<V> visitor) {
-		if(!v.getValue().visited) {
+		if (!v.getValue().visited) {
 			visitor.visit(v.getValue().value);
 			v.getValue().visited = true;
 			for (Edge<SearchVertexValue<V>> edge : v.getEdges()) {
@@ -51,16 +60,17 @@ public final class Graphs {
 	}
 
 	private static <V> void depthFirstSearchVisit(@Nonnull Vertex<SearchVertexValue<V>> v, @Nonnull Stack<Vertex<SearchVertexValue<V>>> stack, @Nonnull Visitor<V> visitor) {
-		if(!v.getValue().visited) {
+		if (!v.getValue().visited) {
 			visitor.visit(v.getValue().value);
 			v.getValue().visited = true;
-			for (Edge<SearchVertexValue<V>> e : v.getEdges()) {
+			for (Edge<SearchVertexValue<V>> e : reversed(v.getEdges())) {
 				stack.add(e.getTo());
 			}
 		}
 	}
 
-	private static <V> Graph<SearchVertexValue<V>> prepareGraph(Graph<V> g) {
+	@Nonnull
+	private static <V> Graph<SearchVertexValue<V>> prepareGraph(@Nonnull Graph<V> g) {
 		final Graph<SearchVertexValue<V>> newGraph = Graph.newGraph();
 
 		final Map<Vertex<V>, Vertex<SearchVertexValue<V>>> vertices = new HashMap<Vertex<V>, Vertex<SearchVertexValue<V>>>();
