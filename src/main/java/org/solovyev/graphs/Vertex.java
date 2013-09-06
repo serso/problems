@@ -17,7 +17,9 @@ public final class Vertex<V> implements Cloneable {
 	@Nullable
 	private Vertex<V> predecessor;
 
-	private double weight = Double.NEGATIVE_INFINITY;
+	private int weight = Graphs.MAX_WEIGHT;
+
+	private boolean visited = false;
 
 	@Nonnull
 	private final V value;
@@ -56,12 +58,20 @@ public final class Vertex<V> implements Cloneable {
 		this.predecessor = predecessor;
 	}
 
-	public double getWeight() {
+	public int getWeight() {
 		return weight;
 	}
 
-	public void setWeight(double weight) {
+	public void setWeight(int weight) {
 		this.weight = weight;
+	}
+
+	public boolean isVisited() {
+		return visited;
+	}
+
+	public void setVisited(boolean visited) {
+		this.visited = visited;
 	}
 
 	@Nonnull

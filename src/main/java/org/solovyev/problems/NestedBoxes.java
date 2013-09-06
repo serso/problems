@@ -8,6 +8,7 @@ import javax.annotation.Nonnull;
 import java.util.*;
 
 import static org.solovyev.graphs.ArtificialVertices.newArtificialVertices;
+import static org.solovyev.graphs.Graphs.findLongestPath;
 import static org.solovyev.graphs.Vertex.newVertex;
 import static org.solovyev.problems.NestedBoxes.Box.newEmptyBox;
 
@@ -37,10 +38,11 @@ public class NestedBoxes {
 
 		final ArtificialVertices<Box> av = addArtificialVertices(g);
 
-		g.calculateSingleSourceLongestPaths(av.getSource());
-
 		final List<Box> path = new ArrayList<Box>();
-		for (Vertex<Box> vertex : g.getPathFrom(av.getDestination())) {
+		for (Vertex<Box> vertex : findLongestPath(g, av.getSource(), av.getDestination()).getVertices()) {
+			if(av.getSource().equals(vertex) || av.getDestination().equals(vertex)) {
+				continue;
+			}
 			path.add(vertex.getValue());
 		}
 		return path;

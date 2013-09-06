@@ -7,103 +7,173 @@ import static org.solovyev.common.collections.Collections.reversed;
 
 public final class Graphs {
 
+	public static final int MAX_WEIGHT = Integer.MAX_VALUE;
+	public static final int MIN_WEIGHT = Integer.MIN_VALUE;
+
 	private Graphs() {
 		throw new AssertionError();
 	}
 
-	static <V> void depthFirstSearch(@Nonnull Graph<V> graph, @Nonnull Vertex<V> source, @Nonnull Visitor<V> visitor) {
-		final Graph<SearchVertexValue<V>> newGraph = prepareGraph(graph);
+	@Nonnull
+	public static <V> Path<V> findShortestPath(@Nonnull Graph<V> g, @Nonnull Vertex<V> s, @Nonnull Vertex<V> d) {
+		return findPathDijkstra(g, s, d, true);
+	}
 
-		final Stack<Vertex<SearchVertexValue<V>>> stack = new Stack<Vertex<SearchVertexValue<V>>>();
-		stack.add(findVertex(newGraph, source));
+	@Nonnull
+	public static <V> Path<V> findLongestPath(@Nonnull Graph<V> g, @Nonnull Vertex<V> s, @Nonnull Vertex<V> d) {
+		return findPathDijkstra(g, s, d, false);
+	}
+
+	public static <V> Path<V> findPathDijkstra(@Nonnull Graph<V> g, @Nonnull Vertex<V> s, @Nonnull Vertex<V> d, boolean shortest) {
+		final int boundary = shortest ? MAX_WEIGHT : MIN_WEIGHT;
+
+		initSingleSource(g, s, boundary);
+
+		final PriorityQueue<Vertex<V>> queue = new PriorityQueue<Vertex<V>>(g.getVertices().size(), new SearchVertexPathComparator<V>());
+		queue.add(s);
+
+		while (!queue.isEmpty()) {
+			final Vertex<V> v = queue.poll();
+			if (v.getWeight() == boundary) {
+				break;
+			}
+
+			for (Edge<V> edge : v.getEdges()) {
+				final int weight = v.getWeight() + edge.getWeight();
+				final Vertex<V> u = edge.getTo();
+				if (shortest ? (u.getWeight() > weight) : (u.getWeight() < weight)) {
+					u.setWeight(weight);
+					u.setPredecessor(v);
+
+					// resort queue according to the u.path change
+					queue.remove(u);
+					queue.add(u);
+				}
+			}
+		}
+
+		return Path.newPath(d);
+	}
+
+	public static <V> Path<V> findLongestPathBellmanForm(@Nonnull Graph<V> graph, @Nonnull Vertex<V> source, @Nonnull Vertex<V> destination) {
+		return findPathBellmanForm(graph, source, destination, false);
+	}
+
+	public static <V> Path<V> findPathBellmanForm(@Nonnull Graph<V> graph, @Nonnull Vertex<V> source, @Nonnull Vertex<V> destination, boolean shortest) {
+		initSingleSource(graph, source, shortest ? MAX_WEIGHT : MIN_WEIGHT);
+
+		for (Vertex<V> from : graph.getVertices()) {
+			for (Edge<V> edge : from.getEdges()) {
+				final Vertex<V> to = edge.getTo();
+				final int weight = from.getWeight() + edge.getWeight();
+				if (shortest ? (to.getWeight() > weight) : (to.getWeight() < weight)) {
+					to.setWeight(weight);
+					to.setPredecessor(from);
+				}
+			}
+		}
+
+		return Path.newPath(destination);
+	}
+
+	static <V> void depthFirstSearch(@Nonnull Vertex<V> source, @Nonnull Visitor<V> visitor) {
+		final Stack<Vertex<V>> stack = new Stack<Vertex<V>>();
+		stack.add(source);
 
 		while (!stack.isEmpty()) {
 			depthFirstSearchVisit(stack.pop(), stack, visitor);
 		}
 	}
 
-	@Nonnull
-	private static <V> Vertex<SearchVertexValue<V>> findVertex(@Nonnull Graph<SearchVertexValue<V>> newGraph, @Nonnull Vertex<V> source) {
-		Vertex<SearchVertexValue<V>> newSource = null;
-		for (Vertex<SearchVertexValue<V>> newVertex : newGraph.getVertices()) {
-			if (newVertex.getValue().value.equals(source)) {
-				newSource = newVertex;
-				break;
-			}
-		}
-
-		if (newSource == null) {
-			throw new IllegalArgumentException("Source vertex doesn't belong to graph");
-		}
-		return newSource;
-	}
-
-	static <V> void breadthFirstSearch(@Nonnull Graph<V> graph, @Nonnull Vertex<V> source, @Nonnull Visitor<V> visitor) {
-		final Graph<SearchVertexValue<V>> newGraph = prepareGraph(graph);
-
-		final Queue<Vertex<SearchVertexValue<V>>> queue = new ArrayDeque<Vertex<SearchVertexValue<V>>>(graph.getVertices().size());
-		queue.add(findVertex(newGraph, source));
+	static <V> void breadthFirstSearch(@Nonnull Vertex<V> source, @Nonnull Visitor<V> visitor) {
+		final Queue<Vertex<V>> queue = new ArrayDeque<Vertex<V>>();
+		queue.add(source);
 
 		while (!queue.isEmpty()) {
 			breadthFirstSearchVisit(queue.poll(), queue, visitor);
 		}
 	}
 
-	private static <V> void breadthFirstSearchVisit(@Nonnull Vertex<SearchVertexValue<V>> v, @Nonnull Queue<Vertex<SearchVertexValue<V>>> queue, @Nonnull Visitor<V> visitor) {
-		if (!v.getValue().visited) {
-			visitor.visit(v.getValue().value);
-			v.getValue().visited = true;
-			for (Edge<SearchVertexValue<V>> edge : v.getEdges()) {
+	private static <V> void breadthFirstSearchVisit(@Nonnull Vertex<V> v, @Nonnull Queue<Vertex<V>> queue, @Nonnull Visitor<V> visitor) {
+		if (!v.isVisited()) {
+			visitor.visit(v);
+			v.setVisited(true);
+			for (Edge<V> edge : v.getEdges()) {
 				queue.add(edge.getTo());
 			}
 		}
 	}
 
-	private static <V> void depthFirstSearchVisit(@Nonnull Vertex<SearchVertexValue<V>> v, @Nonnull Stack<Vertex<SearchVertexValue<V>>> stack, @Nonnull Visitor<V> visitor) {
-		if (!v.getValue().visited) {
-			visitor.visit(v.getValue().value);
-			v.getValue().visited = true;
-			for (Edge<SearchVertexValue<V>> e : reversed(v.getEdges())) {
+	private static <V> void depthFirstSearchVisit(@Nonnull Vertex<V> v, @Nonnull Stack<Vertex<V>> stack, @Nonnull Visitor<V> visitor) {
+		if (!v.isVisited()) {
+			visitor.visit(v);
+			v.setVisited(true);
+			for (Edge<V> e : reversed(v.getEdges())) {
 				stack.add(e.getTo());
 			}
 		}
 	}
 
-	@Nonnull
-	private static <V> Graph<SearchVertexValue<V>> prepareGraph(@Nonnull Graph<V> g) {
-		final Graph<SearchVertexValue<V>> newGraph = Graph.newGraph();
+	public static <V> void initSingleSource(@Nonnull Graph<V> graph, @Nonnull Vertex<V> source, int startValue) {
+		for (Vertex<V> vertex : graph.getVertices()) {
+			vertex.setWeight(startValue);
+			vertex.setVisited(false);
+			vertex.setPredecessor(null);
+		}
+		source.setWeight(0);
+	}
 
-		final Map<Vertex<V>, Vertex<SearchVertexValue<V>>> vertices = new HashMap<Vertex<V>, Vertex<SearchVertexValue<V>>>();
-		for (Vertex<V> vertex : g.getVertices()) {
-			Vertex<SearchVertexValue<V>> newVertex = getNewVertex(vertices, vertex);
-			for (Edge<V> edge : vertex.getEdges()) {
-				newVertex.addNeighbour(getNewVertex(vertices, edge.getTo()), edge.getWeight());
+	private static class SearchVertexPathComparator<V> implements Comparator<Vertex<V>> {
+		@Override
+		public int compare(Vertex<V> o1, Vertex<V> o2) {
+			final int path1 = o1.getWeight();
+			final int path2 = o2.getWeight();
+			if (path1 < path2) {
+				return -1;
+			} else if (path1 > path2) {
+				return 1;
+			} else {
+				return 0;
 			}
-			newGraph.addVertex(newVertex);
-		}
-
-		return newGraph;
-	}
-
-	@Nonnull
-	private static <V> Vertex<SearchVertexValue<V>> getNewVertex(@Nonnull Map<Vertex<V>, Vertex<SearchVertexValue<V>>> vertices, @Nonnull Vertex<V> v) {
-		Vertex<SearchVertexValue<V>> newVertex = vertices.get(v);
-		if (newVertex == null) {
-			newVertex = new Vertex<SearchVertexValue<V>>(new SearchVertexValue<V>(v));
-			vertices.put(v, newVertex);
-		}
-		return newVertex;
-	}
-
-	private static final class SearchVertexValue<V> {
-
-		private final Vertex<V> value;
-
-		private boolean visited;
-
-		private SearchVertexValue(Vertex<V> value) {
-			this.value = value;
 		}
 	}
 
+	public static final class Path<V> {
+
+		private final int length;
+
+		@Nonnull
+		private final List<Vertex<V>> vertices = new ArrayList<Vertex<V>>();
+
+		private Path(int length) {
+			this.length = length;
+		}
+
+		public int getLength() {
+			return length;
+		}
+
+		@Nonnull
+		public List<Vertex<V>> getVertices() {
+			return vertices;
+		}
+
+		public static <V> Path<V> newPath(@Nonnull Vertex<V> destination) {
+			final Path<V> path = new Path<V>(destination.getWeight());
+
+			final List<Vertex<V>> vertices = new ArrayList<Vertex<V>>();
+			vertices.add(destination);
+			Vertex<V> predecessor = destination.getPredecessor();
+			while (predecessor != null) {
+				vertices.add(predecessor);
+				predecessor = predecessor.getPredecessor();
+			}
+
+			for (Vertex<V> vertex : reversed(vertices)) {
+				path.vertices.add(vertex);
+			}
+
+			return path;
+		}
+	}
 }

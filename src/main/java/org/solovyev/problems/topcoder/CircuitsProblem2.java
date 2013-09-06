@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static org.solovyev.graphs.Graph.newGraph;
+import static org.solovyev.graphs.Graphs.findLongestPath;
 import static org.solovyev.graphs.Vertex.newVertex;
 
 /**
@@ -32,9 +33,7 @@ public class CircuitsProblem2 {
 
 		final ArtificialVertices<Component> av = addArtificialVertices(g);
 
-		g.calculateSingleSourceLongestPaths(av.getSource());
-
-		return (int) av.getDestination().getWeight();
+		return findLongestPath(g, av.getSource(), av.getDestination()).getLength();
 	}
 
 	@Nonnull

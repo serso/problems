@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.junit.Assert.assertEquals;
 import static org.solovyev.graphs.Graphs.breadthFirstSearch;
 import static org.solovyev.graphs.Graphs.depthFirstSearch;
+import static org.solovyev.graphs.Graphs.findShortestPath;
 
 public class GraphsTest {
 
@@ -26,7 +27,7 @@ public class GraphsTest {
 	@Test
 	public void testDepthFirstSearch() throws Exception {
 		final AtomicInteger counter = new AtomicInteger();
-		depthFirstSearch(graph, rootVertex, new Visitor<String>() {
+		depthFirstSearch(rootVertex, new Visitor<String>() {
 			@Override
 			public void visit(@Nonnull Vertex<String> v) {
 				assertEquals(getExpectedValue(), v.getValue());
@@ -97,7 +98,7 @@ public class GraphsTest {
 	@Test
 	public void testBreadthFirstSearch() throws Exception {
 		final AtomicInteger counter = new AtomicInteger();
-		breadthFirstSearch(graph, rootVertex, new Visitor<String>() {
+		breadthFirstSearch(rootVertex, new Visitor<String>() {
 			@Override
 			public void visit(@Nonnull Vertex<String> v) {
 				assertEquals(getExpectedValue(), v.getValue());
@@ -133,5 +134,36 @@ public class GraphsTest {
 				throw new AssertionError();
 			}
 		});
+	}
+
+	@Test
+	public void testFindShortestPath() throws Exception {
+		final Graph<String> g = Graph.newGraph();
+		final Vertex<String> s = g.addVertex("s");
+		final Vertex<String> x = g.addVertex("x");
+		final Vertex<String> y = g.addVertex("y");
+		final Vertex<String> u = g.addVertex("u");
+		final Vertex<String> v = g.addVertex("v");
+		s.addNeighbour(x, 5);
+		s.addNeighbour(u, 10);
+		x.addNeighbour(u, 3);
+		x.addNeighbour(v, 9);
+		x.addNeighbour(y, 2);
+		y.addNeighbour(v, 6);
+		y.addNeighbour(s, 7);
+		v.addNeighbour(y, 4);
+		u.addNeighbour(v, 1);
+		u.addNeighbour(x, 2);
+
+		assertEquals(5, findShortestPath(g, s, x).getLength());
+		assertEquals(7, findShortestPath(g, s, y).getLength());
+		assertEquals(8, findShortestPath(g, s, u).getLength());
+		assertEquals(9, findShortestPath(g, s, v).getLength());
+
+		assertEquals(9, findShortestPath(g, x, s).getLength());
+		assertEquals(4, findShortestPath(g, x, v).getLength());
+		assertEquals(3, findShortestPath(g, x, u).getLength());
+		assertEquals(2, findShortestPath(g, x, y).getLength());
+
 	}
 }
