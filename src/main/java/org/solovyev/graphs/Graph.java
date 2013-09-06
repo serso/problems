@@ -1,9 +1,13 @@
 package org.solovyev.graphs;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static org.solovyev.graphs.Vertex.newVertex;
 
 /**
 * User: serso
@@ -78,6 +82,13 @@ public final class Graph<V> implements Cloneable {
 
 	public void addVertex(@Nonnull Vertex<V> vertex) {
 		vertices.add(vertex);
+	}
+
+	@Nonnull
+	public Vertex<V> addVertex(@Nonnull V value) {
+		final Vertex<V> result = newVertex(value);
+		vertices.add(result);
+		return result;
 	}
 
 	public void addVertexToTheStart(@Nonnull Vertex<V> vertex) {

@@ -30,12 +30,16 @@ public final class Vertex<V> implements Cloneable {
 	}
 
 	@Nonnull
-	public static <V> Vertex<V> newVertex(@Nonnull V box) {
-		return new Vertex<V>(box);
+	public static <V> Vertex<V> newVertex(@Nonnull V value) {
+		return new Vertex<V>(value);
 	}
 
 	public void addNeighbour(@Nonnull Vertex<V> neighbour, int weight) {
 		edges.add(newEdge(this, neighbour, weight));
+	}
+
+	public void addNeighbour(@Nonnull Vertex<V> neighbour) {
+		addNeighbour(neighbour, 0);
 	}
 
 	@Nonnull

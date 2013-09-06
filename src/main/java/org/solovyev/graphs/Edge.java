@@ -15,9 +15,9 @@ public final class Edge<V> implements Cloneable {
 	@Nonnull
 	private Vertex<V> to;
 
-	private final double weight;
+	private final int weight;
 
-	private Edge(@Nonnull Vertex<V> from, @Nonnull Vertex<V> to, double weight) {
+	private Edge(@Nonnull Vertex<V> from, @Nonnull Vertex<V> to, int weight) {
 		this.from = from;
 		this.to = to;
 		this.weight = weight;
@@ -38,7 +38,7 @@ public final class Edge<V> implements Cloneable {
 		return to;
 	}
 
-	public double getWeight() {
+	public int getWeight() {
 		return weight;
 	}
 
