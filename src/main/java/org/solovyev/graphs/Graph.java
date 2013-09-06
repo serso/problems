@@ -2,7 +2,6 @@ package org.solovyev.graphs;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static org.solovyev.graphs.Vertex.newVertex;
@@ -23,23 +22,6 @@ public final class Graph<V> implements Cloneable {
 	@Nonnull
 	public static <V> Graph<V> newGraph() {
 		return new Graph<V>();
-	}
-
-	@Nonnull
-	public List<Vertex<V>> getPathFrom(@Nonnull Vertex<V> from) {
-		final List<Vertex<V>> result = new ArrayList<Vertex<V>>();
-
-		Vertex<V> vertex = from;
-		while (vertex.getPredecessor() != null) {
-			if (vertex != from) {
-				result.add(vertex);
-			}
-			vertex = vertex.getPredecessor();
-		}
-
-		Collections.reverse(result);
-
-		return result;
 	}
 
 	public void addVertex(@Nonnull Vertex<V> vertex) {
