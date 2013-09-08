@@ -15,7 +15,7 @@ import static org.solovyev.graphs.Edge.newEdge;
 public final class Vertex<V> implements Cloneable {
 
 	@Nullable
-	private Vertex<V> predecessor;
+	private Predecessor<V> predecessor;
 
 	private int weight = Graphs.MAX_WEIGHT;
 
@@ -50,11 +50,11 @@ public final class Vertex<V> implements Cloneable {
 	}
 
 	@Nullable
-	public Vertex<V> getPredecessor() {
+	public Predecessor<V> getPredecessor() {
 		return predecessor;
 	}
 
-	public void setPredecessor(@Nullable Vertex<V> predecessor) {
+	public void setPredecessor(@Nullable Predecessor<V> predecessor) {
 		this.predecessor = predecessor;
 	}
 
@@ -85,7 +85,7 @@ public final class Vertex<V> implements Cloneable {
 			final Vertex<V> clone = (Vertex<V>) super.clone();
 
 			if(this.predecessor != null) {
-				clone.predecessor = this.predecessor.clone();
+				throw new AssertionError("Should not clone if predecessor != null");
 			}
 
 			clone.edges = new ArrayList<Edge<V>>(this.edges.size());

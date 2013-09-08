@@ -26,11 +26,12 @@ public class GraphsTest {
 	@Test
 	public void testDepthFirstSearch() throws Exception {
 		final AtomicInteger counter = new AtomicInteger();
-		depthFirstSearch(rootVertex, new Visitor<String>() {
+		depthFirstSearch(graph, rootVertex, new Visitor<String>() {
 			@Override
-			public void visit(@Nonnull Vertex<String> v) {
+			public boolean visit(@Nonnull Vertex<String> v) {
 				assertEquals(getExpectedValue(), v.getValue());
 				counter.incrementAndGet();
+				return false;
 			}
 
 			private String getExpectedValue() {
@@ -97,11 +98,12 @@ public class GraphsTest {
 	@Test
 	public void testBreadthFirstSearch() throws Exception {
 		final AtomicInteger counter = new AtomicInteger();
-		breadthFirstSearch(rootVertex, new Visitor<String>() {
+		breadthFirstSearch(graph, rootVertex, new Visitor<String>() {
 			@Override
-			public void visit(@Nonnull Vertex<String> v) {
+			public boolean visit(@Nonnull Vertex<String> v) {
 				assertEquals(getExpectedValue(), v.getValue());
 				counter.incrementAndGet();
+				return false;
 			}
 
 			private String getExpectedValue() {
@@ -182,5 +184,37 @@ public class GraphsTest {
 		assertArrayEquals(new int[]{7,	4,	0,	5,	3}, paths[2]);
 		assertArrayEquals(new int[]{2,	-1,	-5,	0,	-2}, paths[3]);
 		assertArrayEquals(new int[]{8,	5,	1,	6,	0}, paths[4]);
+	}
+
+	@Test
+	public void testFindMaxFlow() throws Exception {
+		Graph<Object> graph = Graph.newGraph();
+		final Vertex<Object> a = graph.addVertex("A");
+		final Vertex<Object> b = graph.addVertex("B");
+		final Vertex<Object> c = graph.addVertex("C");
+		final Vertex<Object> d = graph.addVertex("D");
+		final Vertex<Object> e = graph.addVertex("E");
+		final Vertex<Object> f = graph.addVertex("F");
+		final Vertex<Object> g = graph.addVertex("G");
+
+		a.addNeighbour(b, 3);
+		a.addNeighbour(d, 3);
+
+		b.addNeighbour(c, 4);
+
+		c.addNeighbour(a, 3);
+		c.addNeighbour(d, 1);
+		c.addNeighbour(e, 2);
+
+		d.addNeighbour(e, 2);
+		d.addNeighbour(f, 6);
+
+		e.addNeighbour(b, 1);
+		e.addNeighbour(g, 1);
+
+		f.addNeighbour(g, 9);
+
+		assertEquals(5, Graphs.findMaxFlow(graph, a, g));
+
 	}
 }

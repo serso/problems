@@ -4,6 +4,7 @@ import javax.annotation.Nonnull;
 import java.util.*;
 
 import static org.solovyev.common.collections.Collections.reversed;
+import static org.solovyev.graphs.Predecessor.newPredecessor;
 
 public final class Graphs {
 
@@ -14,8 +15,69 @@ public final class Graphs {
 		throw new AssertionError();
 	}
 
+	public static <V> int findMaxFlow(@Nonnull Graph<V> g, @Nonnull Vertex<V> s, @Nonnull Vertex<V> d) {
+		while (true) {
+			for (Vertex<V> vertex : g.getVertices()) {
+				vertex.setWeight(MAX_WEIGHT);
+				vertex.setVisited(false);
+				vertex.setPredecessor(null);
+			}
+
+			findFlowPath(s, d);
+			if (d.getPredecessor() == null) {
+				return sumFlow(s);
+			}
+		}
+	}
+
+	private static <V> void findFlowPath(@Nonnull Vertex<V> s, @Nonnull Vertex<V> d) {
+		final Queue<Vertex<V>> queue = new ArrayDeque<Vertex<V>>();
+		queue.add(s);
+
+		loop:
+		while (!queue.isEmpty()) {
+			final Vertex<V> from = queue.poll();
+			if (!from.isVisited()) {
+				from.setVisited(true);
+
+				for (Edge<V> e : from.getEdges()) {
+					final Vertex<V> to = e.getTo();
+					if(e.getWeight() - e.getFlow() > 0 && !to.isVisited()) {
+						to.setPredecessor(newPredecessor(from, e));
+						to.setWeight(Math.min(from.getWeight(), e.getWeight() - e.getFlow()));
+						if(!to.equals(d)) {
+							queue.add(to);
+						} else {
+							// path found => backtrack and set correct flow values
+							backtrackFlow(d);
+
+							break loop;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	private static <V> void backtrackFlow(@Nonnull Vertex<V> d) {
+		Predecessor<V> p = d.getPredecessor();
+		while (p != null) {
+			final Edge<V> e = p.getEdge();
+			e.setFlow(e.getFlow() + d.getWeight());
+			p = p.getPredecessor();
+		}
+	}
+
+	private static <V> int sumFlow(@Nonnull Vertex<V> s) {
+		int flow = 0;
+		for (Edge<V> edge : s.getEdges()) {
+			flow += edge.getFlow();
+		}
+		return flow;
+	}
+
 	@Nonnull
-	public static <V> int[][] findShortestPaths(@Nonnull int[][] g) {
+	public static int[][] findShortestPaths(@Nonnull int[][] g) {
 		final int size = g.length;
 
 		final int[][] paths = new int[size][];
@@ -65,7 +127,7 @@ public final class Graphs {
 				final Vertex<V> u = edge.getTo();
 				if (shortest ? (u.getWeight() > weight) : (u.getWeight() < weight)) {
 					u.setWeight(weight);
-					u.setPredecessor(v);
+					u.setPredecessor(newPredecessor(v, edge));
 
 					// resort queue according to the u.path change
 					queue.remove(u);
@@ -90,7 +152,7 @@ public final class Graphs {
 				final int weight = from.getWeight() + edge.getWeight();
 				if (shortest ? (to.getWeight() > weight) : (to.getWeight() < weight)) {
 					to.setWeight(weight);
-					to.setPredecessor(from);
+					to.setPredecessor(newPredecessor(from, edge));
 				}
 			}
 		}
@@ -98,7 +160,9 @@ public final class Graphs {
 		return Path.newPath(destination);
 	}
 
-	static <V> void depthFirstSearch(@Nonnull Vertex<V> source, @Nonnull Visitor<V> visitor) {
+	static <V> void depthFirstSearch(@Nonnull Graph<V> graph, @Nonnull Vertex<V> source, @Nonnull Visitor<V> visitor) {
+		initSingleSource(graph, source, 0);
+
 		final Stack<Vertex<V>> stack = new Stack<Vertex<V>>();
 		stack.add(source);
 
@@ -107,7 +171,9 @@ public final class Graphs {
 		}
 	}
 
-	static <V> void breadthFirstSearch(@Nonnull Vertex<V> source, @Nonnull Visitor<V> visitor) {
+	static <V> void breadthFirstSearch(@Nonnull Graph<V> graph, @Nonnull Vertex<V> source, @Nonnull Visitor<V> visitor) {
+		initSingleSource(graph, source, 0);
+
 		final Queue<Vertex<V>> queue = new ArrayDeque<Vertex<V>>();
 		queue.add(source);
 
@@ -118,20 +184,24 @@ public final class Graphs {
 
 	private static <V> void breadthFirstSearchVisit(@Nonnull Vertex<V> v, @Nonnull Queue<Vertex<V>> queue, @Nonnull Visitor<V> visitor) {
 		if (!v.isVisited()) {
-			visitor.visit(v);
+			final boolean stop = visitor.visit(v);
 			v.setVisited(true);
-			for (Edge<V> edge : v.getEdges()) {
-				queue.add(edge.getTo());
+			if (!stop) {
+				for (Edge<V> edge : v.getEdges()) {
+					queue.add(edge.getTo());
+				}
 			}
 		}
 	}
 
 	private static <V> void depthFirstSearchVisit(@Nonnull Vertex<V> v, @Nonnull Stack<Vertex<V>> stack, @Nonnull Visitor<V> visitor) {
 		if (!v.isVisited()) {
-			visitor.visit(v);
+			final boolean stop = visitor.visit(v);
 			v.setVisited(true);
-			for (Edge<V> e : reversed(v.getEdges())) {
-				stack.add(e.getTo());
+			if (!stop) {
+				for (Edge<V> e : reversed(v.getEdges())) {
+					stack.add(e.getTo());
+				}
 			}
 		}
 	}
@@ -185,10 +255,10 @@ public final class Graphs {
 
 			final List<Vertex<V>> vertices = new ArrayList<Vertex<V>>();
 			vertices.add(destination);
-			Vertex<V> predecessor = destination.getPredecessor();
-			while (predecessor != null) {
-				vertices.add(predecessor);
-				predecessor = predecessor.getPredecessor();
+			Predecessor<V> p = destination.getPredecessor();
+			while (p != null) {
+				vertices.add(p.getVertex());
+				p = p.getPredecessor();
 			}
 
 			for (Vertex<V> vertex : reversed(vertices)) {

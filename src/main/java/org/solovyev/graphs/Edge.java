@@ -17,6 +17,8 @@ public final class Edge<V> implements Cloneable {
 
 	private final int weight;
 
+	private int flow;
+
 	private Edge(@Nonnull Vertex<V> from, @Nonnull Vertex<V> to, int weight) {
 		this.from = from;
 		this.to = to;
@@ -40,6 +42,14 @@ public final class Edge<V> implements Cloneable {
 
 	public int getWeight() {
 		return weight;
+	}
+
+	public int getFlow() {
+		return flow;
+	}
+
+	public void setFlow(int flow) {
+		this.flow = flow;
 	}
 
 	@Override
