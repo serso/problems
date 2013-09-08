@@ -51,7 +51,7 @@ public final class Graphs {
 
 		initSingleSource(g, s, boundary);
 
-		final PriorityQueue<Vertex<V>> queue = new PriorityQueue<Vertex<V>>(g.getVertices().size(), new SearchVertexPathComparator<V>());
+		final PriorityQueue<Vertex<V>> queue = new PriorityQueue<Vertex<V>>(g.getVertices().size(), new VertexPathComparator<V>());
 		queue.add(s);
 
 		while (!queue.isEmpty()) {
@@ -145,7 +145,7 @@ public final class Graphs {
 		source.setWeight(0);
 	}
 
-	private static class SearchVertexPathComparator<V> implements Comparator<Vertex<V>> {
+	private static class VertexPathComparator<V> implements Comparator<Vertex<V>> {
 		@Override
 		public int compare(Vertex<V> o1, Vertex<V> o2) {
 			final int path1 = o1.getWeight();
