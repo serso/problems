@@ -14,6 +14,7 @@ import static org.solovyev.graphs.Graphs.*;
 
 public class GraphsTest {
 
+	private static final double EPS = 0.0000005;
 	@Nonnull
 	private Graph<String> graph;
 
@@ -158,15 +159,15 @@ public class GraphsTest {
 		u.addNeighbour(v, 1);
 		u.addNeighbour(x, 2);
 
-		assertEquals(5, findShortestPath(g, s, x).getLength());
-		assertEquals(7, findShortestPath(g, s, y).getLength());
-		assertEquals(8, findShortestPath(g, s, u).getLength());
-		assertEquals(9, findShortestPath(g, s, v).getLength());
+		assertEquals(5, findShortestPath(g, s, x).getLength(), EPS);
+		assertEquals(7, findShortestPath(g, s, y).getLength(), EPS);
+		assertEquals(8, findShortestPath(g, s, u).getLength(), EPS);
+		assertEquals(9, findShortestPath(g, s, v).getLength(), EPS);
 
-		assertEquals(9, findShortestPath(g, x, s).getLength());
-		assertEquals(4, findShortestPath(g, x, v).getLength());
-		assertEquals(3, findShortestPath(g, x, u).getLength());
-		assertEquals(2, findShortestPath(g, x, y).getLength());
+		assertEquals(9, findShortestPath(g, x, s).getLength(), EPS);
+		assertEquals(4, findShortestPath(g, x, v).getLength(), EPS);
+		assertEquals(3, findShortestPath(g, x, u).getLength(), EPS);
+		assertEquals(2, findShortestPath(g, x, y).getLength(), EPS);
 
 	}
 

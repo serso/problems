@@ -127,7 +127,7 @@ public final class Graphs {
 			}
 
 			for (Edge<V> edge : v.getEdges()) {
-				final int weight = v.getWeight() + edge.getWeight();
+				final double weight = v.getWeight() + edge.getWeight();
 				final Vertex<V> u = edge.getTo();
 				if (shortest ? (u.getWeight() > weight) : (u.getWeight() < weight)) {
 					u.setWeight(weight);
@@ -159,9 +159,9 @@ public final class Graphs {
 		final PriorityQueue<Vertex<V>> tentativeVertices = new PriorityQueue<Vertex<V>>(g.getVertices().size(), new Comparator<Vertex<V>>() {
 			@Override
 			public int compare(Vertex<V> o1, Vertex<V> o2) {
-				final int distance1 = o1.getWeight();
-				final int distance2 = o2.getWeight();
-				return Objects.compare(distance1, distance2);
+				final Double distance1 = o1.getWeight();
+				final Double distance2 = o2.getWeight();
+				return Objects.compare((Number)distance1, distance2);
 			}
 		});
 		tentativeVertices.add(s);
@@ -177,7 +177,7 @@ public final class Graphs {
 					v.setVisited(true);
 					for (Edge<V> edge : v.getEdges()) {
 						final Vertex<V> u = edge.getTo();
-						final int tentativeDistance = v.getFlow() + dh.getDistance(v, u);
+						final double tentativeDistance = v.getFlow() + dh.getDistance(v, u);
 						if(u.isVisited() && tentativeDistance >= u.getFlow()) {
 							continue;
 						}
@@ -208,7 +208,7 @@ public final class Graphs {
 		for (Vertex<V> from : graph.getVertices()) {
 			for (Edge<V> edge : from.getEdges()) {
 				final Vertex<V> to = edge.getTo();
-				final int weight = from.getWeight() + edge.getWeight();
+				final double weight = from.getWeight() + edge.getWeight();
 				if (shortest ? (to.getWeight() > weight) : (to.getWeight() < weight)) {
 					to.setWeight(weight);
 					to.setPredecessor(newPredecessor(from, edge));
@@ -277,8 +277,8 @@ public final class Graphs {
 	private static class VertexPathComparator<V> implements Comparator<Vertex<V>> {
 		@Override
 		public int compare(Vertex<V> o1, Vertex<V> o2) {
-			final int path1 = o1.getWeight();
-			final int path2 = o2.getWeight();
+			final double path1 = o1.getWeight();
+			final double path2 = o2.getWeight();
 			if (path1 < path2) {
 				return -1;
 			} else if (path1 > path2) {
@@ -291,16 +291,16 @@ public final class Graphs {
 
 	public static final class Path<V> {
 
-		private final int length;
+		private final double length;
 
 		@Nonnull
 		private final List<Vertex<V>> vertices = new ArrayList<Vertex<V>>();
 
-		private Path(int length) {
+		private Path(double length) {
 			this.length = length;
 		}
 
-		public int getLength() {
+		public double getLength() {
 			return length;
 		}
 

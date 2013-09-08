@@ -18,9 +18,9 @@ public final class Vertex<V> implements Cloneable {
 	@Nullable
 	private Predecessor<V> predecessor;
 
-	private int weight = Graphs.MAX_WEIGHT;
+	private double weight = Graphs.MAX_WEIGHT;
 
-	private int flow = 0;
+	private double flow = 0;
 
 	private boolean visited = false;
 
@@ -39,12 +39,12 @@ public final class Vertex<V> implements Cloneable {
 		return new Vertex<V>(value);
 	}
 
-	public void addNeighbour(@Nonnull Vertex<V> neighbour, int weight) {
+	public void addNeighbour(@Nonnull Vertex<V> neighbour, double weight) {
 		edges.add(newEdge(this, neighbour, weight));
 	}
 
 	public void addNeighbour(@Nonnull Vertex<V> neighbour) {
-		addNeighbour(neighbour, 0);
+		addNeighbour(neighbour, 0d);
 	}
 
 	@Nonnull
@@ -90,19 +90,19 @@ public final class Vertex<V> implements Cloneable {
 		this.predecessor = predecessor;
 	}
 
-	public int getWeight() {
+	public double getWeight() {
 		return weight;
 	}
 
-	public void setWeight(int weight) {
+	public void setWeight(double weight) {
 		this.weight = weight;
 	}
 
-	public int getFlow() {
+	public double getFlow() {
 		return flow;
 	}
 
-	public void setFlow(int flow) {
+	public void setFlow(double flow) {
 		// cannot exceed the weight of vertex
 		this.flow = Math.min(flow, weight);
 	}

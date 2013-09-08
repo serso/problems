@@ -33,7 +33,7 @@ public class CircuitsProblem2 {
 
 		final ArtificialVertices<Component> av = addArtificialVertices(g);
 
-		return findLongestPath(g, av.getSource(), av.getDestination()).getLength();
+		return (int) findLongestPath(g, av.getSource(), av.getDestination()).getLength();
 	}
 
 	@Nonnull
