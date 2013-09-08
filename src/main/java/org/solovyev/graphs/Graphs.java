@@ -1,5 +1,7 @@
 package org.solovyev.graphs;
 
+import org.solovyev.common.Objects;
+
 import javax.annotation.Nonnull;
 import java.util.*;
 
@@ -134,6 +136,61 @@ public final class Graphs {
 					// resort queue according to the u.path change
 					queue.remove(u);
 					queue.add(u);
+				}
+			}
+		}
+
+		return Path.newPath(d);
+	}
+
+	@Nonnull
+	public static <V> Path<V> findShortestPathAStar(@Nonnull Graph<V> g,
+													@Nonnull Vertex<V> s,
+													@Nonnull Vertex<V> d,
+													@Nonnull DistanceHeuristic<V> dh) {
+		initSingleSource(g, s, MAX_WEIGHT);
+
+		// shortest distance from source to current vertex
+		s.setFlow(0);
+
+		// distance of path from source to destination coming through current vertex
+		s.setWeight(dh.getDistance(s, d));
+
+		final PriorityQueue<Vertex<V>> tentativeVertices = new PriorityQueue<Vertex<V>>(g.getVertices().size(), new Comparator<Vertex<V>>() {
+			@Override
+			public int compare(Vertex<V> o1, Vertex<V> o2) {
+				final int distance1 = o1.getWeight();
+				final int distance2 = o2.getWeight();
+				return Objects.compare(distance1, distance2);
+			}
+		});
+		tentativeVertices.add(s);
+		while (!tentativeVertices.isEmpty()) {
+			final Vertex<V> v = tentativeVertices.poll();
+
+			// check for possible duplicates
+			if (!v.isVisited()) {
+
+				if(v.equals(d)) {
+					break;
+				} else {
+					v.setVisited(true);
+					for (Edge<V> edge : v.getEdges()) {
+						final Vertex<V> u = edge.getTo();
+						final int tentativeDistance = v.getFlow() + dh.getDistance(v, u);
+						if(u.isVisited() && tentativeDistance >= u.getFlow()) {
+							continue;
+						}
+
+						if(!u.isVisited() || tentativeDistance < u.getFlow()) {
+							u.setPredecessor(newPredecessor(v, edge));
+							u.setFlow(tentativeDistance);
+							u.setWeight(tentativeDistance + dh.getDistance(u, d));
+							if(!u.isVisited()) {
+								tentativeVertices.add(u);
+							}
+						}
+					}
 				}
 			}
 		}

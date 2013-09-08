@@ -3,6 +3,7 @@ package org.solovyev.graphs;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import static org.solovyev.graphs.Edge.newEdge;
@@ -49,6 +50,35 @@ public final class Vertex<V> implements Cloneable {
 	@Nonnull
 	public List<Edge<V>> getEdges() {
 		return edges;
+	}
+
+	@Nonnull
+	public Iterable<Vertex<V>> getNeighbours() {
+		return new Iterable<Vertex<V>>() {
+			@Override
+			public Iterator<Vertex<V>> iterator() {
+				return new Iterator<Vertex<V>>() {
+
+					@Nonnull
+					private final Iterator<Edge<V>> edgeIterator = edges.iterator();
+
+					@Override
+					public boolean hasNext() {
+						return edgeIterator.hasNext();
+					}
+
+					@Override
+					public Vertex<V> next() {
+						return edgeIterator.next().getTo();
+					}
+
+					@Override
+					public void remove() {
+						edgeIterator.remove();
+					}
+				};
+			}
+		};
 	}
 
 	@Nullable

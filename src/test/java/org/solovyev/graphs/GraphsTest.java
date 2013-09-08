@@ -6,6 +6,8 @@ import org.junit.Test;
 import javax.annotation.Nonnull;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static java.lang.Math.pow;
+import static java.lang.Math.sqrt;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.solovyev.graphs.Graphs.*;
@@ -216,5 +218,86 @@ public class GraphsTest {
 
 		assertEquals(5, Graphs.findMaxFlow(graph, a, g));
 
+	}
+
+	@Test
+	public void testFindShortestPathAStar() throws Exception {
+		final Graph<Point> graph = Graph.newGraph();
+		final int size = 10;
+		final Vertex<Point>[][] vertices = new Vertex[size][size];
+
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
+				vertices[i][j] = graph.addVertex(Point.newPoint(i, j));
+			}
+		}
+
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
+				if(i > 0) {
+					vertices[i][j].addNeighbour(vertices[i-1][j]);
+				}
+
+				if(j > 0) {
+					vertices[i][j].addNeighbour(vertices[i][j-1]);
+				}
+
+				if(i < size - 1) {
+					vertices[i][j].addNeighbour(vertices[i+1][j]);
+				}
+
+				if(j < size - 1) {
+					vertices[i][j].addNeighbour(vertices[i][j+1]);
+				}
+			}
+		}
+
+		Path<Point> path = Graphs.findShortestPathAStar(graph, vertices[0][0], vertices[size - 1][size - 1], new DistanceHeuristic<Point>() {
+			@Override
+			public int getDistance(@Nonnull Vertex<Point> from, @Nonnull Vertex<Point> to) {
+				final Point toValue = to.getValue();
+				final Point fromValue = from.getValue();
+				return toValue.getDistance(fromValue);
+			}
+		});
+
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
+				boolean found = false;
+				for (Vertex<Point> vertex : path.getVertices()) {
+					if(vertex.getValue().x == i && vertex.getValue().y == j) {
+						found = true;
+						break;
+					}
+				}
+
+				if(found) {
+					System.out.print("x");
+				} else {
+					System.out.print(" ");
+				}
+			}
+			System.out.println(" ");
+		}
+
+	}
+
+	private static final class Point {
+		private final int x;
+		private final int y;
+
+
+		private Point(int x, int y) {
+			this.x = x;
+			this.y = y;
+		}
+
+		private static Point newPoint(int x, int y) {
+			return new Point(x, y);
+		}
+
+		private int getDistance(@Nonnull Point that) {
+			return (int) sqrt(pow(this.x - that.x, 2) + pow(this.y - that.y, 2));
+		}
 	}
 }
