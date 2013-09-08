@@ -4,6 +4,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.lang.Math.pow;
@@ -223,64 +225,106 @@ public class GraphsTest {
 
 	@Test
 	public void testFindShortestPathAStar() throws Exception {
-		final Graph<Point> graph = Graph.newGraph();
 		final int size = 10;
+
+		final Graph<Point> graph = Graph.newGraph();
 		final Vertex<Point>[][] vertices = new Vertex[size][size];
 
+		fill2dGraph(size, graph, vertices);
+		Path<Point> path = Graphs.findShortestPathAStar(graph, vertices[0][0], vertices[size - 1][size - 1], new PointDistanceHeuristic());
+		printPath(size, path, vertices);
+
+		fill2dGraph(size, graph, vertices, Point.newPoint(size-2, size-2), Point.newPoint(size-3, size-2), Point.newPoint(size-2, size-3), Point.newPoint(size-4, size-2), Point.newPoint(size-2, size-4));
+		path = Graphs.findShortestPathAStar(graph, vertices[0][0], vertices[size - 1][size - 1], new PointDistanceHeuristic());
+		printPath(size, path, vertices);
+	}
+
+	private void fill2dGraph(int size, @Nonnull Graph<Point> graph, @Nonnull Vertex<Point>[][] vertices, @Nonnull Point... wallPoints) {
+		List<Point> walls = Arrays.asList(wallPoints);
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
-				vertices[i][j] = graph.addVertex(Point.newPoint(i, j));
+				final Point wall = Point.newPoint(i, j);
+				if (walls.contains(wall)) {
+					vertices[i][j] = null;
+				} else {
+					vertices[i][j] = graph.addVertex(wall);
+				}
 			}
 		}
 
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
-				if(i > 0) {
-					vertices[i][j].addNeighbour(vertices[i-1][j]);
+				boolean north = i > 0;
+				if(north) {
+					addNeighbour(vertices, i, j, i - 1, j);
 				}
 
-				if(j > 0) {
-					vertices[i][j].addNeighbour(vertices[i][j-1]);
+				boolean west = j > 0;
+				if(west) {
+					addNeighbour(vertices, i, j, i, j - 1);
 				}
 
-				if(i < size - 1) {
-					vertices[i][j].addNeighbour(vertices[i+1][j]);
+				boolean south = i < size - 1;
+				if(south) {
+					addNeighbour(vertices, i, j, i + 1, j);
 				}
 
-				if(j < size - 1) {
-					vertices[i][j].addNeighbour(vertices[i][j+1]);
+				boolean east = j < size - 1;
+				if(east) {
+					addNeighbour(vertices, i, j, i, j + 1);
+				}
+
+				if(north && west) {
+					addNeighbour(vertices, i, j, i - 1, j - 1);
+				}
+
+				if(north && east) {
+					addNeighbour(vertices, i, j, i - 1, j + 1);
+				}
+
+				if(south && west) {
+					addNeighbour(vertices, i, j, i + 1, j - 1);
+				}
+
+				if(south && east) {
+					addNeighbour(vertices, i, j, i + 1, j + 1);
 				}
 			}
 		}
+	}
 
-		Path<Point> path = Graphs.findShortestPathAStar(graph, vertices[0][0], vertices[size - 1][size - 1], new DistanceHeuristic<Point>() {
-			@Override
-			public int getDistance(@Nonnull Vertex<Point> from, @Nonnull Vertex<Point> to) {
-				final Point toValue = to.getValue();
-				final Point fromValue = from.getValue();
-				return toValue.getDistance(fromValue);
+	private void addNeighbour(Vertex<Point>[][] vertices, int x, int y, int i, int j) {
+		if (vertices[x][y] != null) {
+			final Vertex<Point> neighbour = vertices[i][j];
+			if (neighbour != null) {
+				vertices[x][y].addNeighbour(neighbour);
 			}
-		});
+		}
+	}
 
+	private void printPath(int size, @Nonnull Path<Point> path, @Nonnull Vertex<Point>[][] vertices) {
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
-				boolean found = false;
-				for (Vertex<Point> vertex : path.getVertices()) {
-					if(vertex.getValue().x == i && vertex.getValue().y == j) {
-						found = true;
-						break;
+				if(vertices[i][j] == null) {
+					System.out.print("❚");
+				} else {
+					boolean found = false;
+					for (Vertex<Point> vertex : path.getVertices()) {
+						if(vertex.getValue().x == i && vertex.getValue().y == j) {
+							found = true;
+							break;
+						}
+					}
+
+					if(found) {
+						System.out.print("x");
+					} else {
+						System.out.print(" ");
 					}
 				}
-
-				if(found) {
-					System.out.print("x");
-				} else {
-					System.out.print(" ");
-				}
 			}
-			System.out.println(" ");
+			System.out.println("");
 		}
-
 	}
 
 	private static final class Point {
@@ -297,8 +341,37 @@ public class GraphsTest {
 			return new Point(x, y);
 		}
 
-		private int getDistance(@Nonnull Point that) {
-			return (int) sqrt(pow(this.x - that.x, 2) + pow(this.y - that.y, 2));
+		private double getDistance(@Nonnull Point that) {
+			return sqrt(pow(this.x - that.x, 2) + pow(this.y - that.y, 2));
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+
+			Point point = (Point) o;
+
+			if (x != point.x) return false;
+			if (y != point.y) return false;
+
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			int result = x;
+			result = 31 * result + y;
+			return result;
+		}
+	}
+
+	private static class PointDistanceHeuristic implements DistanceHeuristic<Point> {
+		@Override
+		public double getDistance(@Nonnull Vertex<Point> from, @Nonnull Vertex<Point> to) {
+			final Point toValue = to.getValue();
+			final Point fromValue = from.getValue();
+			return toValue.getDistance(fromValue);
 		}
 	}
 }

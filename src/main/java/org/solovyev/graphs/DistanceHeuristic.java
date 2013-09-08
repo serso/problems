@@ -9,5 +9,5 @@ import javax.annotation.Nonnull;
  */
 public interface DistanceHeuristic<V> {
 
-	int getDistance(@Nonnull Vertex<V> from, @Nonnull Vertex<V> to);
+	double getDistance(@Nonnull Vertex<V> from, @Nonnull Vertex<V> to);
 }
