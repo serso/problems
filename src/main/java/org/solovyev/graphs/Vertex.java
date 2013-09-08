@@ -19,6 +19,8 @@ public final class Vertex<V> implements Cloneable {
 
 	private int weight = Graphs.MAX_WEIGHT;
 
+	private int flow = 0;
+
 	private boolean visited = false;
 
 	@Nonnull
@@ -64,6 +66,15 @@ public final class Vertex<V> implements Cloneable {
 
 	public void setWeight(int weight) {
 		this.weight = weight;
+	}
+
+	public int getFlow() {
+		return flow;
+	}
+
+	public void setFlow(int flow) {
+		// cannot exceed the weight of vertex
+		this.flow = Math.min(flow, weight);
 	}
 
 	public boolean isVisited() {

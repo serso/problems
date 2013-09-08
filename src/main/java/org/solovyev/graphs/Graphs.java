@@ -3,6 +3,7 @@ package org.solovyev.graphs;
 import javax.annotation.Nonnull;
 import java.util.*;
 
+import static java.lang.Math.min;
 import static org.solovyev.common.collections.Collections.reversed;
 import static org.solovyev.graphs.Predecessor.newPredecessor;
 
@@ -19,6 +20,7 @@ public final class Graphs {
 		while (true) {
 			for (Vertex<V> vertex : g.getVertices()) {
 				vertex.setWeight(MAX_WEIGHT);
+				vertex.setFlow(MAX_WEIGHT);
 				vertex.setVisited(false);
 				vertex.setPredecessor(null);
 			}
@@ -42,9 +44,9 @@ public final class Graphs {
 
 				for (Edge<V> e : from.getEdges()) {
 					final Vertex<V> to = e.getTo();
-					if(e.getWeight() - e.getFlow() > 0 && !to.isVisited()) {
+					if(e.getResidualFlow() > 0 && !to.isVisited()) {
 						to.setPredecessor(newPredecessor(from, e));
-						to.setWeight(Math.min(from.getWeight(), e.getWeight() - e.getFlow()));
+						to.setFlow(min(from.getFlow(), e.getResidualFlow()));
 						if(!to.equals(d)) {
 							queue.add(to);
 						} else {
@@ -63,7 +65,7 @@ public final class Graphs {
 		Predecessor<V> p = d.getPredecessor();
 		while (p != null) {
 			final Edge<V> e = p.getEdge();
-			e.setFlow(e.getFlow() + d.getWeight());
+			e.setFlow(e.getFlow() + d.getFlow());
 			p = p.getPredecessor();
 		}
 	}
@@ -89,7 +91,7 @@ public final class Graphs {
 			for (int i = 0; i < size; i++) {
 				for (int j = 0; j < size; j++) {
 					if(paths[i][k] != MAX_WEIGHT && paths[k][j] != MAX_WEIGHT) {
-						paths[i][j] = Math.min(paths[i][j], paths[i][k] + paths[k][j]);
+						paths[i][j] = min(paths[i][j], paths[i][k] + paths[k][j]);
 					}
 				}
 			}

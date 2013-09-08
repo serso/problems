@@ -44,12 +44,16 @@ public final class Edge<V> implements Cloneable {
 		return weight;
 	}
 
+	public int getResidualFlow() {
+		return weight - flow;
+	}
+
 	public int getFlow() {
 		return flow;
 	}
 
 	public void setFlow(int flow) {
-		this.flow = flow;
+		this.flow = Math.min(flow, weight);
 	}
 
 	@Override
