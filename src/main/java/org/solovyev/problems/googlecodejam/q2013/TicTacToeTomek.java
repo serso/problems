@@ -18,16 +18,16 @@ public class TicTacToeTomek extends GoogleCodeJamProblem {
 
 	@Nonnull
 	@Override
-	protected CharSequence solve(@Nonnull String line, @Nonnull BufferedReader sr) throws IOException {
+	protected CharSequence solve(@Nonnull String line, @Nonnull BufferedReader br) throws IOException {
 		char[][] board = new char[SIZE][SIZE];
 
 		fillRow(board, 0, line);
 		for(int row = 1; row < SIZE; row++) {
-			line = sr.readLine();
+			line = br.readLine();
 			fillRow(board, row, line);
 		}
 
-		sr.readLine();
+		br.readLine();
 
 		return solve(board);
 	}

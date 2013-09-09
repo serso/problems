@@ -14,7 +14,7 @@ import java.io.IOException;
 public class Lawnmower extends GoogleCodeJamProblem {
 	@Nonnull
 	@Override
-	protected CharSequence solve(@Nonnull String line, @Nonnull BufferedReader sr) throws IOException {
+	protected CharSequence solve(@Nonnull String line, @Nonnull BufferedReader br) throws IOException {
 		final String[] dimensions = line.split(" ");
 
 		final int rows = Integer.valueOf(dimensions[0]);
@@ -23,7 +23,7 @@ public class Lawnmower extends GoogleCodeJamProblem {
 		final int[][] lawn = new int[rows][cols];
 
 		for(int i = 0; i < rows; i++) {
-			line = sr.readLine();
+			line = br.readLine();
 			final String[] row = line.split(" ");
 			for (int j = 0; j < row.length; j++) {
 				input[i][j] = Integer.valueOf(row[j]);

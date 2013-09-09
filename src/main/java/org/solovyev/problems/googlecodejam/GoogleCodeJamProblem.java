@@ -47,5 +47,5 @@ public abstract class GoogleCodeJamProblem {
 	}
 
 	@Nonnull
-	protected abstract CharSequence solve(@Nonnull String line, @Nonnull BufferedReader sr) throws IOException;
+	protected abstract CharSequence solve(@Nonnull String line, @Nonnull BufferedReader br) throws IOException;
 }
