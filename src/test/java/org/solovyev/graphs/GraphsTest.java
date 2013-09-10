@@ -386,6 +386,6 @@ public class GraphsTest {
 		a.addNeighbour(b);
 		b.addNeighbour(c);
 		c.addNeighbour(a);
-		Assert.assertEquals(Arrays.asList(c, b, a), Graphs.findEulerianPath(g));
+		Assert.assertEquals(Arrays.asList(a, c, b, a), Graphs.findEulerianPath(g));
 	}
 }

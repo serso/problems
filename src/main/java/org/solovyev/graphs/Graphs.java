@@ -51,7 +51,6 @@ public final class Graphs {
 	private static <V> void findEulerianCycle(@Nonnull Graph<V> g, @Nonnull Vertex<V> s, @Nonnull List<Vertex<V>> path) {
 		final Iterator<Edge<V>> iterator = g.getEdges().iterator();
 
-		final boolean hasNext = iterator.hasNext();
 		while (iterator.hasNext()) {
 			final Edge<V> edge = iterator.next();
 			final Vertex<V> from = edge.getFrom();
@@ -66,9 +65,7 @@ public final class Graphs {
 			}
 		}
 
-		if (hasNext) {
-			path.add(s);
-		}
+		path.add(s);
 	}
 
 	public static <V> int findMaxFlow(@Nonnull Graph<V> g, @Nonnull Vertex<V> s, @Nonnull Vertex<V> d) {
