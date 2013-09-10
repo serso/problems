@@ -3,6 +3,7 @@ package org.solovyev.graphs;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -24,6 +25,9 @@ public final class Vertex<V> implements Cloneable {
 
 	private boolean visited = false;
 
+	private int inDegree = 0;
+	private int outDegree = 0;
+
 	@Nonnull
 	private final V value;
 
@@ -41,6 +45,8 @@ public final class Vertex<V> implements Cloneable {
 
 	public void addNeighbour(@Nonnull Vertex<V> neighbour, double weight) {
 		edges.add(newEdge(this, neighbour, weight));
+		neighbour.inDegree++;
+		outDegree++;
 	}
 
 	public void addNeighbour(@Nonnull Vertex<V> neighbour) {
@@ -49,7 +55,40 @@ public final class Vertex<V> implements Cloneable {
 
 	@Nonnull
 	public List<Edge<V>> getEdges() {
-		return edges;
+		return Collections.unmodifiableList(edges);
+	}
+
+	@Nonnull
+	public Iterable<Edge<V>> getEdgesIterable() {
+		return new Iterable<Edge<V>>() {
+			@Override
+			public Iterator<Edge<V>> iterator() {
+				return new Iterator<Edge<V>>() {
+
+					@Nonnull
+					private final Iterator<Edge<V>> iterator = edges.iterator();
+					private Edge<V> lastEdge;
+
+					@Override
+					public boolean hasNext() {
+						return iterator.hasNext();
+					}
+
+					@Override
+					public Edge<V> next() {
+						lastEdge = iterator.next();
+						return lastEdge;
+					}
+
+					@Override
+					public void remove() {
+						iterator.remove();
+						lastEdge.getTo().inDegree--;
+						lastEdge.getFrom().outDegree--;
+					}
+				};
+			}
+		};
 	}
 
 	@Nonnull
@@ -61,6 +100,7 @@ public final class Vertex<V> implements Cloneable {
 
 					@Nonnull
 					private final Iterator<Edge<V>> edgeIterator = edges.iterator();
+					private Edge<V> lastNext;
 
 					@Override
 					public boolean hasNext() {
@@ -69,12 +109,15 @@ public final class Vertex<V> implements Cloneable {
 
 					@Override
 					public Vertex<V> next() {
-						return edgeIterator.next().getTo();
+						lastNext = edgeIterator.next();
+						return lastNext.getTo();
 					}
 
 					@Override
 					public void remove() {
 						edgeIterator.remove();
+						lastNext.getTo().inDegree--;
+						outDegree--;
 					}
 				};
 			}
@@ -118,6 +161,18 @@ public final class Vertex<V> implements Cloneable {
 	@Nonnull
 	public V getValue() {
 		return value;
+	}
+
+	public int getInDegree() {
+		return inDegree;
+	}
+
+	public int getOutDegree() {
+		return outDegree;
+	}
+
+	public int getDegree() {
+		return inDegree + outDegree;
 	}
 
 	@Override

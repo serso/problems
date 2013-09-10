@@ -3,10 +3,12 @@ package org.solovyev.graphs;
 import org.solovyev.common.Objects;
 
 import javax.annotation.Nonnull;
+
 import java.util.*;
 
 import static java.lang.Math.min;
 import static org.solovyev.common.collections.Collections.reversed;
+import static org.solovyev.graphs.Graphs.Path.newPath;
 import static org.solovyev.graphs.Predecessor.newPredecessor;
 
 public final class Graphs {
@@ -16,6 +18,51 @@ public final class Graphs {
 
 	private Graphs() {
 		throw new AssertionError();
+	}
+
+	public static <V> Path<V> findEulerianPath(@Nonnull Graph<V> g) {
+		Vertex<V> s = null;
+		Vertex<V> d = null;
+
+		for (Vertex<V> vertex : g.getVertices()) {
+			if (vertex.getDegree() % 2 == 1) {
+				if(s == null) {
+					s = vertex;
+				} else if (d == null) {
+					d = vertex;
+				} else {
+					throw new IllegalArgumentException("No path is possible");
+				}
+			}
+		}
+
+		if(s == null || d == null) {
+			throw new IllegalArgumentException("No path is possible");
+		}
+
+		findEulerianPath(g, s, d, new ArrayList<Vertex<V>>());
+
+		return newPath(s);
+	}
+
+	private static <V> void findEulerianPath(@Nonnull Graph<V> g, @Nonnull Vertex<V> s,  @Nonnull Vertex<V> d, @Nonnull List<Vertex<V>> path) {
+		final Iterator<Edge<V>> iterator = g.getEdges().iterator();
+
+		while (iterator.hasNext()) {
+			final Edge<V> edge = iterator.next();
+			final Vertex<V> from = edge.getFrom();
+			final Vertex<V> to = edge.getTo();
+
+			if(from.equals(s)){
+				iterator.remove();
+				findEulerianPath(g, to, d, path);
+			} else if (to.equals(s)) {
+				iterator.remove();
+				findEulerianPath(g, from, d, path);
+			}
+		}
+
+		path.add(s);
 	}
 
 	public static <V> int findMaxFlow(@Nonnull Graph<V> g, @Nonnull Vertex<V> s, @Nonnull Vertex<V> d) {
@@ -140,7 +187,7 @@ public final class Graphs {
 			}
 		}
 
-		return Path.newPath(d);
+		return newPath(d);
 	}
 
 	@Nonnull
@@ -195,7 +242,7 @@ public final class Graphs {
 			}
 		}
 
-		return Path.newPath(d);
+		return newPath(d);
 	}
 
 	public static <V> Path<V> findLongestPathBellmanForm(@Nonnull Graph<V> graph, @Nonnull Vertex<V> source, @Nonnull Vertex<V> destination) {
@@ -216,7 +263,7 @@ public final class Graphs {
 			}
 		}
 
-		return Path.newPath(destination);
+		return newPath(destination);
 	}
 
 	static <V> void depthFirstSearch(@Nonnull Graph<V> graph, @Nonnull Vertex<V> source, @Nonnull Visitor<V> visitor) {
