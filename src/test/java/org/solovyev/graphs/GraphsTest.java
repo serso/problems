@@ -378,14 +378,109 @@ public class GraphsTest {
 	}
 
 	@Test
-	public void testEulerianPath() throws Exception {
-		Graph<String> g = newGraph();
+	public void testEulerianCycle() throws Exception {
+		final Graph<String> g = newGraph();
 		final Vertex<String> a = g.addVertex("a");
 		final Vertex<String> b = g.addVertex("b");
 		final Vertex<String> c = g.addVertex("c");
 		a.addNeighbour(b);
 		b.addNeighbour(c);
 		c.addNeighbour(a);
-		Assert.assertEquals(Arrays.asList(a, c, b, a), Graphs.findEulerianPath(g));
+		Assert.assertEquals("[a, c, b, a]", toString(Graphs.findEulerianCycle(g, a)));
+	}
+
+	@Test
+	public void testEulerianCycle2() throws Exception {
+		final Graph<String> g = newGraph();
+		final Vertex<String> a = g.addVertex("a");
+		final Vertex<String> b = g.addVertex("b");
+		final Vertex<String> c = g.addVertex("c");
+		final Vertex<String> d = g.addVertex("d");
+		final Vertex<String> e = g.addVertex("e");
+
+		c.addNeighbour(a);
+		a.addNeighbour(b);
+		b.addNeighbour(c);
+
+		a.addNeighbour(c);
+		b.addNeighbour(a);
+		c.addNeighbour(b);
+
+		a.addNeighbour(d);
+		d.addNeighbour(a);
+
+		a.addNeighbour(e);
+		e.addNeighbour(a);
+
+		b.addNeighbour(d);
+		d.addNeighbour(b);
+
+		b.addNeighbour(e);
+		e.addNeighbour(b);
+
+		Assert.assertEquals("[c, a, e, b, d, b, e, a, d, a, b, c, b, a, c]", toString(Graphs.findEulerianCycle(g, c)));
+	}
+
+	@Test
+	public void testEulerianCycle3() throws Exception {
+		final Graph<String> g = newGraph();
+		final Vertex<String> a = g.addVertex("a");
+		final Vertex<String> b = g.addVertex("b");
+		final Vertex<String> c = g.addVertex("c");
+		final Vertex<String> d = g.addVertex("d");
+		final Vertex<String> e = g.addVertex("e");
+
+		a.addNeighbour(b);
+		b.addNeighbour(c);
+		c.addNeighbour(a);
+		a.addNeighbour(d);
+		d.addNeighbour(b);
+		b.addNeighbour(e);
+		e.addNeighbour(a);
+
+		Assert.assertEquals("[a, e, b, d, a, c, b, a]", toString(findEulerianCycle(g, a)));
+	}
+
+	@Test
+	public void testEulerianCycle4() throws Exception {
+		final Graph<String> graph = newGraph();
+		final Vertex<String> a = graph.addVertex("a");
+		final Vertex<String> b = graph.addVertex("b");
+		final Vertex<String> c = graph.addVertex("c");
+		final Vertex<String> d = graph.addVertex("d");
+		final Vertex<String> e = graph.addVertex("e");
+		final Vertex<String> f = graph.addVertex("f");
+		final Vertex<String> g = graph.addVertex("g");
+
+		a.addNeighbour(b);
+		b.addNeighbour(c);
+		c.addNeighbour(a);
+		a.addNeighbour(d);
+		d.addNeighbour(b);
+		b.addNeighbour(e);
+		e.addNeighbour(a);
+
+		a.addNeighbour(f);
+		f.addNeighbour(g);
+		g.addNeighbour(a);
+
+		Assert.assertEquals("[a, g, f, a, e, b, d, a, c, b, a]", toString(findEulerianCycle(graph, a)));
+	}
+
+	@Nonnull
+	private String toString(@Nonnull List<Vertex<String>> path) {
+		final StringBuilder sb = new StringBuilder(5 * path.size());
+
+		sb.append("[");
+		for (int i = 0; i < path.size(); i++) {
+			final Vertex<String> element = path.get(i);
+			if(i != 0) {
+				sb.append(", ");
+			}
+			sb.append(element.getValue());
+		}
+		sb.append("]");
+
+		return sb.toString();
 	}
 }

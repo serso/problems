@@ -171,10 +171,6 @@ public final class Vertex<V> implements Cloneable {
 		return outDegree;
 	}
 
-	public int getDegree() {
-		return inDegree + outDegree;
-	}
-
 	@Override
 	protected Vertex<V> clone() {
 		try {
