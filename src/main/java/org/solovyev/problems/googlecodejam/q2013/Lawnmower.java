@@ -6,11 +6,8 @@ import javax.annotation.Nonnull;
 import java.io.BufferedReader;
 import java.io.IOException;
 
-/**
- * User: serso
- * Date: 9/2/13
- * Time: 11:46 PM
- */
+// http://code.google.com/codejam/contest/2270488/dashboard#s=p1
+
 public class Lawnmower extends GoogleCodeJamProblem {
 	@Nonnull
 	@Override

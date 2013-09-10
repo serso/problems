@@ -7,11 +7,8 @@ import javax.annotation.Nullable;
 import java.io.BufferedReader;
 import java.io.IOException;
 
-/**
- * User: serso
- * Date: 9/2/13
- * Time: 10:30 PM
- */
+// http://code.google.com/codejam/contest/2270488/dashboard
+
 public class TicTacToeTomek extends GoogleCodeJamProblem {
 
 	public static final int SIZE = 4;
