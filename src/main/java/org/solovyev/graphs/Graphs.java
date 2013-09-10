@@ -20,7 +20,8 @@ public final class Graphs {
 		throw new AssertionError();
 	}
 
-	public static <V> Path<V> findEulerianPath(@Nonnull Graph<V> g) {
+	@Nonnull
+	public static <V> List<Vertex<V>> findEulerianPath(@Nonnull Graph<V> g) {
 		Vertex<V> s = null;
 		Vertex<V> d = null;
 
@@ -36,18 +37,21 @@ public final class Graphs {
 			}
 		}
 
-		if(s == null || d == null) {
+		if(s != null && d == null) {
 			throw new IllegalArgumentException("No path is possible");
+		} else if (s == null) {
+			s = g.getVertices().get(0);
 		}
 
-		findEulerianPath(g, s, d, new ArrayList<Vertex<V>>());
-
-		return newPath(s);
+		final List<Vertex<V>> path = new ArrayList<Vertex<V>>();
+		findEulerianCycle(g, s, path);
+		return path;
 	}
 
-	private static <V> void findEulerianPath(@Nonnull Graph<V> g, @Nonnull Vertex<V> s,  @Nonnull Vertex<V> d, @Nonnull List<Vertex<V>> path) {
+	private static <V> void findEulerianCycle(@Nonnull Graph<V> g, @Nonnull Vertex<V> s, @Nonnull List<Vertex<V>> path) {
 		final Iterator<Edge<V>> iterator = g.getEdges().iterator();
 
+		final boolean hasNext = iterator.hasNext();
 		while (iterator.hasNext()) {
 			final Edge<V> edge = iterator.next();
 			final Vertex<V> from = edge.getFrom();
@@ -55,14 +59,16 @@ public final class Graphs {
 
 			if(from.equals(s)){
 				iterator.remove();
-				findEulerianPath(g, to, d, path);
+				findEulerianCycle(g, to, path);
 			} else if (to.equals(s)) {
 				iterator.remove();
-				findEulerianPath(g, from, d, path);
+				findEulerianCycle(g, from, path);
 			}
 		}
 
-		path.add(s);
+		if (hasNext) {
+			path.add(s);
+		}
 	}
 
 	public static <V> int findMaxFlow(@Nonnull Graph<V> g, @Nonnull Vertex<V> s, @Nonnull Vertex<V> d) {

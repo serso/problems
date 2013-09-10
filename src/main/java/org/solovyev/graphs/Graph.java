@@ -60,25 +60,29 @@ public final class Graph<V> implements Cloneable {
 					@Override
 					public boolean hasNext() {
 						if(iterator == null) {
-							return vertexIterator.hasNext();
+							return setIterator();
 						} else {
 							if(iterator.hasNext()) {
 								return true;
 							} else {
-								boolean hasNext = false;
-
-								while (vertexIterator.hasNext()) {
-									final Vertex<V> nextVertex = vertexIterator.next();
-									iterator = nextVertex.getEdges().iterator();
-									if (iterator.hasNext()) {
-										hasNext = true;
-										break;
-									}
-								}
-
-								return hasNext;
+								return setIterator();
 							}
 						}
+					}
+
+					private boolean setIterator() {
+						boolean hasNext = false;
+
+						while (vertexIterator.hasNext()) {
+							final Vertex<V> nextVertex = vertexIterator.next();
+							iterator = nextVertex.getEdgesIterable().iterator();
+							if (iterator.hasNext()) {
+								hasNext = true;
+								break;
+							}
+						}
+
+						return hasNext;
 					}
 
 					@Override

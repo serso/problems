@@ -1,5 +1,6 @@
 package org.solovyev.graphs;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -12,6 +13,7 @@ import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.solovyev.graphs.Graph.newGraph;
 import static org.solovyev.graphs.Graphs.*;
 
 public class GraphsTest {
@@ -71,7 +73,7 @@ public class GraphsTest {
 	}
 
 	private Graph<String> createTestGraph() {
-		graph = Graph.newGraph();
+		graph = newGraph();
 		rootVertex = graph.addVertex("0");
 		final Vertex<String> v0 = rootVertex;
 		final Vertex<String> v01 = graph.addVertex("01");
@@ -144,7 +146,7 @@ public class GraphsTest {
 
 	@Test
 	public void testFindShortestPath() throws Exception {
-		final Graph<String> g = Graph.newGraph();
+		final Graph<String> g = newGraph();
 		final Vertex<String> s = g.addVertex("s");
 		final Vertex<String> x = g.addVertex("x");
 		final Vertex<String> y = g.addVertex("y");
@@ -193,7 +195,7 @@ public class GraphsTest {
 
 	@Test
 	public void testFindMaxFlow() throws Exception {
-		Graph<Object> graph = Graph.newGraph();
+		Graph<Object> graph = newGraph();
 		final Vertex<Object> a = graph.addVertex("A");
 		final Vertex<Object> b = graph.addVertex("B");
 		final Vertex<Object> c = graph.addVertex("C");
@@ -227,7 +229,7 @@ public class GraphsTest {
 	public void testFindShortestPathAStar() throws Exception {
 		final int size = 10;
 
-		final Graph<Point> graph = Graph.newGraph();
+		final Graph<Point> graph = newGraph();
 		final Vertex<Point>[][] vertices = new Vertex[size][size];
 
 		fill2dGraph(size, graph, vertices);
@@ -373,5 +375,17 @@ public class GraphsTest {
 			final Point fromValue = from.getValue();
 			return toValue.getDistance(fromValue);
 		}
+	}
+
+	@Test
+	public void testEulerianPath() throws Exception {
+		Graph<String> g = newGraph();
+		final Vertex<String> a = g.addVertex("a");
+		final Vertex<String> b = g.addVertex("b");
+		final Vertex<String> c = g.addVertex("c");
+		a.addNeighbour(b);
+		b.addNeighbour(c);
+		c.addNeighbour(a);
+		Assert.assertEquals(Arrays.asList(c, b, a), Graphs.findEulerianPath(g));
 	}
 }
