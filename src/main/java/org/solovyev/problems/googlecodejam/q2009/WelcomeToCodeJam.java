@@ -20,6 +20,8 @@ public class WelcomeToCodeJam {
 
 	private static final String pattern = "welcome to code jam";
 
+	private static final String lineSeparator = System.getProperty("line.separator");
+
 	static String solve(@Nonnull InputStream is) throws IOException {
 		final StringBuilder result = new StringBuilder();
 
@@ -36,7 +38,7 @@ public class WelcomeToCodeJam {
 				result.append(testCaseCounter + 1);
 				result.append(": ");
 				result.append(toString(solve(line)));
-				result.append("\n");
+				result.append(lineSeparator);
 				testCaseCounter++;
 			} else {
 				break;

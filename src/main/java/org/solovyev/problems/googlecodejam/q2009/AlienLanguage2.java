@@ -17,6 +17,8 @@ public class AlienLanguage2 {
 
 	public static final int LATIN_ALPHABET_COUNT = 26;
 
+	private static final String lineSeparator = System.getProperty("line.separator");
+
 	static String solve(@Nonnull InputStream is) throws IOException {
 		final StringBuilder result = new StringBuilder();
 
@@ -39,7 +41,7 @@ public class AlienLanguage2 {
 				dictionaryCounter++;
 			} else if(testCaseCounter < testCasesCount) {
 				result.append(solve(dictionary, line, wordLength, testCaseCounter));
-				result.append("\n");
+				result.append(lineSeparator);
 				testCaseCounter++;
 			} else {
 				break;

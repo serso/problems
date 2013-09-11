@@ -15,6 +15,8 @@ import static org.solovyev.common.Charsets.UTF_8;
  */
 public abstract class GoogleCodeJamProblem {
 
+	protected static final String newLine = System.getProperty("line.separator");
+
 	@Nonnull
 	public final String solve(@Nonnull InputStream is) throws IOException {
 		final StringBuilder result = new StringBuilder();
@@ -34,7 +36,7 @@ public abstract class GoogleCodeJamProblem {
 				result.append(testCaseCounter + 1);
 				result.append(": ");
 				result.append(solve(line, sr));
-				result.append("\n");
+				result.append(newLine);
 				testCaseCounter++;
 			} else {
 				break;

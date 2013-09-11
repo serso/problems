@@ -1,8 +1,9 @@
-package org.solovyev.problems.googlecodejam.q2013;
+package org.solovyev.problems.googlecodejam.q2013.qualifications;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.solovyev.common.text.Strings;
+import org.solovyev.problems.googlecodejam.q2013.qualifications.Lawnmower;
 
 /**
  * User: serso

@@ -1,4 +1,4 @@
-package org.solovyev.problems.googlecodejam.q2013;
+package org.solovyev.problems.googlecodejam.q2013.qualifications;
 
 import org.solovyev.problems.googlecodejam.GoogleCodeJamProblem;
 

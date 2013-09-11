@@ -1,7 +1,8 @@
-package org.solovyev.problems.googlecodejam.q2013;
+package org.solovyev.problems.googlecodejam.q2013.qualifications;
 
 import org.junit.Test;
 import org.solovyev.common.text.Strings;
+import org.solovyev.problems.googlecodejam.q2013.qualifications.TicTacToeTomek;
 
 import static org.junit.Assert.assertEquals;
 

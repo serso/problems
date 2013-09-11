@@ -1,4 +1,4 @@
-package org.solovyev.problems.googlecodejam.q2013;
+package org.solovyev.problems.googlecodejam.q2013.round1a;
 
 import org.solovyev.problems.googlecodejam.GoogleCodeJamProblem;
 
@@ -33,16 +33,26 @@ public class Bullseye extends GoogleCodeJamProblem{
 	}
 
 	private BigInteger findK(@Nonnull BigInteger left, @Nonnull BigInteger right, @Nonnull BigInteger r, @Nonnull BigInteger paint) {
-		final BigInteger center = right.subtract(left).divide(TWO);
+		final BigInteger center = left.add(right.subtract(left).divide(TWO));
 		if(center.compareTo(ZERO) == 0) {
 			return ONE;
 		}
 
-		if(center.compareTo(left) < 0) {
+		if(center.compareTo(left) == 0) {
+			/*if(left.add(ONE).compareTo(right) == 0) {
+				final BigInteger paintRight = paintKRings(r, right);
+				if(paintRight.compareTo(paint) <= 0) {
+					return right;
+				} else {
+					return left;
+				}
+			} else {
+				return left;
+			}*/
 			return left;
 		}
 
-		if(center.compareTo(right) > 0) {
+		if(center.compareTo(right) == 0) {
 			return right;
 		}
 		final BigInteger paintKRings = paintKRings(r, center);
@@ -56,7 +66,9 @@ public class Bullseye extends GoogleCodeJamProblem{
 	}
 
 	private static final BigInteger paintKRings(final BigInteger r, final BigInteger k) {
-		return k.multiply(s0(r).add(TWO.multiply(k.add(ONE))));
+		final BigInteger r2 = TWO.multiply(r);
+		final BigInteger k2 = TWO.multiply(k);
+		return k.multiply(r2.add(k2).subtract(ONE));
 	}
 
 	private static final BigInteger s0(final BigInteger r) {

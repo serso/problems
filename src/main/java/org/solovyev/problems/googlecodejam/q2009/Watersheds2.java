@@ -21,6 +21,8 @@ import static org.solovyev.common.Charsets.UTF_8;
 // http://code.google.com/codejam/contest/dashboard?c=90101#s=a&a=1
 public class Watersheds2 {
 
+	private static final String lineSeparator = System.getProperty("line.separator");
+
 	static String solve(@Nonnull InputStream is) throws IOException {
 		final StringBuilder result = new StringBuilder();
 
@@ -38,9 +40,9 @@ public class Watersheds2 {
 				final Integer cols = Integer.valueOf(arguments[1]);
 				result.append("Case #");
 				result.append(testCaseCounter + 1);
-				result.append(":\n");
+				result.append(":").append(lineSeparator);
 				result.append(solve(sr, rows, cols));
-				result.append("\n");
+				result.append(lineSeparator);
 				testCaseCounter++;
 			} else {
 				break;
@@ -89,7 +91,7 @@ public class Watersheds2 {
 		final StringBuilder result = new StringBuilder();
 		for (int row = 0; row < rows; row++) {
 			if (row > 0) {
-				result.append("\n");
+				result.append(lineSeparator);
 			}
 			for (int col = 0; col < cols; col++) {
 				if (col > 0) {
