@@ -11,11 +11,6 @@ import static java.math.BigInteger.ONE;
 import static java.math.BigInteger.ZERO;
 import static org.solovyev.common.Charsets.UTF_8;
 
-/**
- * User: serso
- * Date: 9/1/13
- * Time: 6:53 PM
- */
 public class WelcomeToCodeJam {
 
 	private static final String pattern = "welcome to code jam";

@@ -9,11 +9,6 @@ import java.util.*;
 
 import static org.solovyev.common.Charsets.UTF_8;
 
-/**
- * User: serso
- * Date: 9/1/13
- * Time: 12:52 PM
- */
 public class AlienLanguage {
 
 	static String solve(@Nonnull InputStream is) throws IOException {

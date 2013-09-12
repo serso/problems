@@ -12,12 +12,6 @@ import java.util.Map;
 
 import static org.solovyev.common.Charsets.UTF_8;
 
-/**
- * User: serso
- * Date: 9/1/13
- * Time: 2:24 PM
- */
-
 // http://code.google.com/codejam/contest/dashboard?c=90101#s=a&a=1
 public class Watersheds2 {
 

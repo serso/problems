@@ -7,11 +7,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * User: serso
- * Date: 8/12/13
- * Time: 11:03 PM
- */
 final class IntegerKnapsackProblem {
 
 	@Nonnull

@@ -1,10 +1,5 @@
 package org.solovyev.problems.topcoder;
 
-/**
- * User: serso
- * Date: 8/31/13
- * Time: 10:58 PM
- */
 // http://community.topcoder.com/stat?c=problem_statement&pm=12691
 public class PiecewiseLinearFunctionProblem {
 

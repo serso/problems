@@ -4,11 +4,6 @@ import javax.annotation.Nonnull;
 
 import static java.lang.Math.max;
 
-/**
- * User: serso
- * Date: 9/2/13
- * Time: 9:34 PM
- */
 public class LongestCommonContagiousSubsequence {
 
 	public static int findLccs(@Nonnull String l, @Nonnull String r) {

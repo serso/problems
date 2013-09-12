@@ -1,11 +1,5 @@
 package org.solovyev.problems.topcoder;
 
-/**
- * User: serso
- * Date: 8/25/13
- * Time: 8:43 PM
- */
-
 import org.solovyev.graphs.ArtificialVertices;
 import org.solovyev.graphs.Edge;
 import org.solovyev.graphs.Graph;
@@ -20,11 +14,6 @@ import static org.solovyev.graphs.Graph.newGraph;
 import static org.solovyev.graphs.Graphs.findLongestPath;
 import static org.solovyev.graphs.Vertex.newVertex;
 
-/**
- * User: serso
- * Date: 8/20/13
- * Time: 10:25 PM
- */
 // http://community.topcoder.com/stat?c=problem_statement&pm=1593
 public class CircuitsProblem2 {
 

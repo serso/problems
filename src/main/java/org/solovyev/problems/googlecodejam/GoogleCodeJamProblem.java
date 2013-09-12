@@ -8,11 +8,6 @@ import java.io.InputStreamReader;
 
 import static org.solovyev.common.Charsets.UTF_8;
 
-/**
- * User: serso
- * Date: 9/2/13
- * Time: 10:31 PM
- */
 public abstract class GoogleCodeJamProblem {
 
 	protected static final String newLine = System.getProperty("line.separator");

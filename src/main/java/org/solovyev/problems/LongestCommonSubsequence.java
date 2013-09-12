@@ -2,11 +2,6 @@ package org.solovyev.problems;
 
 import javax.annotation.Nonnull;
 
-/**
- * User: serso
- * Date: 9/2/13
- * Time: 9:34 PM
- */
 public class LongestCommonSubsequence {
 
 	public static int findLcs(@Nonnull String l, @Nonnull String r) {

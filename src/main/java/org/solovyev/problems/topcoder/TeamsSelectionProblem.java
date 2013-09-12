@@ -2,11 +2,6 @@ package org.solovyev.problems.topcoder;
 
 import javax.annotation.Nonnull;
 
-/**
- * User: serso
- * Date: 8/21/13
- * Time: 11:30 PM
- */
 // http://community.topcoder.com/stat?c=problem_statement&pm=12696
 public class TeamsSelectionProblem {
 

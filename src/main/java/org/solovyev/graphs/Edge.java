@@ -2,11 +2,6 @@ package org.solovyev.graphs;
 
 import javax.annotation.Nonnull;
 
-/**
-* User: serso
-* Date: 8/25/13
-* Time: 7:31 PM
-*/
 public final class Edge<V> implements Cloneable {
 
 	@Nonnull

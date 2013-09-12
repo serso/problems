@@ -6,11 +6,6 @@ import javax.annotation.Nullable;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
-/**
- * User: serso
- * Date: 8/21/13
- * Time: 12:25 AM
- */
 // http://community.topcoder.com/stat?c=problem_statement&pm=3101&rd=5886
 public class LakeDepthProblem {
 

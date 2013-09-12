@@ -4,11 +4,6 @@ import org.solovyev.common.text.Strings;
 
 import javax.annotation.Nonnull;
 
-/**
- * User: serso
- * Date: 8/20/13
- * Time: 10:25 PM
- */
 // http://community.topcoder.com/stat?c=problem_statement&pm=1593
 public class CircuitsProblem {
 

@@ -8,11 +8,6 @@ import java.io.InputStreamReader;
 
 import static org.solovyev.common.Charsets.UTF_8;
 
-/**
- * User: serso
- * Date: 9/1/13
- * Time: 12:52 PM
- */
 public class AlienLanguage2 {
 
 	public static final int LATIN_ALPHABET_COUNT = 26;

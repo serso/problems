@@ -7,11 +7,6 @@ import java.util.List;
 
 import static org.solovyev.graphs.Vertex.newVertex;
 
-/**
-* User: serso
-* Date: 8/25/13
-* Time: 7:31 PM
-*/
 public final class Graph<V> implements Cloneable {
 
 	@Nonnull
